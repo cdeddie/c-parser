@@ -1,13 +1,22 @@
 #pragma once
 
 #include "parser/AST/expression/ExpressionNode.hpp"
+#include "parser/AST/IdentifierNode.hpp"
+
+#include <vector>
+#include <memory>
 
 class FunctionCallNode : public ExpressionNode
 {
 public:
-	FunctionCallNode(const std::string& functionName, std::vector<std::unique_ptr<ExpressionNode>> arguments);
+    FunctionCallNode(std::unique_ptr<IdentifierNode> identifier, std::vector<std::unique_ptr<ExpressionNode>> arguments);
+
+    const IdentifierNode& getIdentifier() const;
+    const std::vector<std::unique_ptr<ExpressionNode>>& getArguments() const;
+
+    virtual void accept(const Visitor& visitor) const override;
 
 private:
-	std::string functionName;
-	std::vector<std::unique_ptr<ExpressionNode>> arguments;
+    std::unique_ptr<IdentifierNode> identifier;
+    std::vector<std::unique_ptr<ExpressionNode>> arguments;
 };

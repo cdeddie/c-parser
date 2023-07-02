@@ -1,7 +1,6 @@
 #pragma once
 
-#include "parser/Node.hpp"
-#include "parser/AST/declaration/DeclarationNode.hpp"
+#include "parser/AST/statement/declaration/DeclarationNode.hpp"
 #include "parser/AST/expression/ExpressionNode.hpp"
 
 class VariableDeclarationNode : public DeclarationNode
@@ -13,7 +12,9 @@ public:
 		std::unique_ptr<ExpressionNode> expression
 	);
 
-	std::unique_ptr<ExpressionNode>& getInit() { return init; }
+	const ExpressionNode& getInit() const;
+
+    virtual void accept(const Visitor& visitor) const override;
 private:
 	std::unique_ptr<ExpressionNode> init;
 };

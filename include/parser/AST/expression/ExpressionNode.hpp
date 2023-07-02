@@ -5,6 +5,7 @@
 class ExpressionNode : public Node
 {
 public:
-	virtual ~ExpressionNode() = default;
+    virtual ~ExpressionNode() = default;
 
+    virtual void accept(const Visitor& visitor) const override;
 };

@@ -5,6 +5,11 @@ Parser::Parser(Lexer& lexer) : lexer(lexer), currentToken(lexer.nextToken())
 	
 }
 
+Token Parser::peekToken()
+{
+    return lexer.peekToken();
+}
+
 void Parser::advance()
 {
     currentToken = lexer.nextToken();
@@ -32,7 +37,7 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
     auto programNode = std::make_unique<ProgramNode>();
     while (currentToken.getType() != TokenType::EndOfFile)
     {
-        programNode->addChild(parseFunctionDefinition());
+        // add children
     }
     return programNode;
 }
@@ -48,11 +53,6 @@ std::unique_ptr<FunctionDefinitionNode> Parser::parseFunctionDefinition()
 
     advance();
     return functionNode;
-}
-
-std::unique_ptr<ExpressionNode> Parser::parseExpression()
-{
-    return nullptr;
 }
 
 std::unique_ptr<TypeNode> Parser::parseType()
@@ -79,11 +79,63 @@ std::unique_ptr<IdentifierNode> Parser::parseIdentifier()
 
 std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 {
-    return std::vector<std::unique_ptr<ParameterNode>>();
+    std::vector<std::unique_ptr<ParameterNode>> parameters;
+
+    // Example: (int x, int y)
+    expect(TokenType::OpenParen);
+
+    while (currentToken.getType() != TokenType::CloseParen)
+    {
+        auto typeNode = parseType();
+        auto identifierNode = parseIdentifier();
+
+        // void parameter in c, i.e. int main(void)
+        if (currentToken.getType() == TokenType::Type && currentToken.getValue() == "void")
+        {
+            advance();
+            expect(TokenType::CloseParen);
+            return parameters;
+        }
+
+        // Emplace constructs the object
+        parameters.emplace_back(std::make_unique<ParameterNode>(std::move(typeNode), std::move(identifierNode)));
+
+        if (currentToken.getType()  == TokenType::Comma)
+        {
+            advance();
+        }
+
+        else if (currentToken.getType() != TokenType::CloseParen)
+        {
+            throw std::runtime_error("Expected a comma or closing parentheses in parameter list");
+        }
+    }
+
+    // Consumes closing paren
+    advance();
+    return parameters;
 }
 
 std::unique_ptr<BlockNode> Parser::parseBlock()
 {
-    return nullptr;
+    expect(TokenType::OpenBracket);
+
+    auto blockNode = std::make_unique<BlockNode>();
+
+    // Enter new scope
+    env.pushScope();
+
+    while (currentToken.getType() != TokenType::CloseParen)
+    {
+        auto statement = parseStatement();
+        blockNode->addStatement(std::move(statement));
+    }
+
+    // Leave scope
+    env.popScope();
+
+    expect(TokenType::CloseBracket);
+
+    return blockNode;
 }
 

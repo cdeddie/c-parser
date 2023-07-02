@@ -1,4 +1,5 @@
-#include "parser/AST/declaration/DeclarationNode.hpp"
+#include "parser/AST/statement/declaration/DeclarationNode.hpp"
+#include "parser/Visitor.hpp"
 
 DeclarationNode::DeclarationNode(
     std::unique_ptr<TypeNode> type, 
@@ -23,4 +24,9 @@ const IdentifierNode& DeclarationNode::getIdentifier() const
 const ExpressionNode& DeclarationNode::getExpression() const
 {
     return *expression;
+}
+
+void DeclarationNode::accept(const Visitor& visitor) const
+{
+    visitor.visit(*this);
 }

@@ -5,7 +5,8 @@
 class LiteralNode : public ExpressionNode
 {
 public:
-	LiteralNode(const std::string& value);
-private:
-	std::string value;
+    virtual ~LiteralNode() = default;
+
+    virtual void accept(const Visitor& visitor) const override;
+
 };

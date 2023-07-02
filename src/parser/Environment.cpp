@@ -1,5 +1,7 @@
 #include "parser/Environment.hpp"
 
+#include <stdexcept>
+
 SymbolTable& Environment::getCurrentSymbolTable()
 {
     return symbolTableStack.top();

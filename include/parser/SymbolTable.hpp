@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 #include <string>
+#include <variant>
+#include <vector>
 
 /*
     The symbol table is used throughout semantic analysis and code generation to keep track
@@ -13,28 +15,25 @@
     This will be generated through the visitor method, after the parser has created the AST.
 */
 
-namespace SymbolInfo
+
+struct Parameter
 {
-    struct Parameter
-    {
-        std::string type;
-        std::string name;
-    };
+    std::string type;
+    std::string name;
+};
 
-    struct FunctionSignature
-    {
-        std::string returnType;
-        std::vector<Parameter> parameters;
-    };
-
-}
+struct FunctionSignature
+{
+    std::string returnType;
+    std::vector<Parameter> parameters;
+};
 
 struct Symbol 
 {
     std::string name;
     enum class SymbolType { Int, Float, Bool, Function, Variable } type;
-    // Potentially more attributes
-    std::variant<int, float, bool, SymbolInfo::FunctionSignature> value; // TODO: Understand
+    // Potentially more attributes // Parser does not support bool right now
+    std::variant<int, float, char, FunctionSignature> value; // TODO: Understand
 };
 
 class SymbolTable

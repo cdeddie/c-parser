@@ -10,9 +10,11 @@ enum class TokenType
 {
     Identifier,
     Keyword,
+    Return,
     Type,
     Symbol,
-    Number,
+    Integer,
+    Float,
     StringLiteral,
     CharLiteral,
     Whitespace,
@@ -35,7 +37,6 @@ public:
     Token(TokenType type, const std::string& value, int line, int column);
     Token();
     TokenType getType() const;
-    // This function's return type is a const std::string, also ensures that the method does not modify the called object
     const std::string& getValue() const; 
 
     int getLine() const;

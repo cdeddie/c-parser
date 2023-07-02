@@ -11,9 +11,11 @@ std::string getTokenTypeString(TokenType type)
     static const std::map<TokenType, std::string> tokenTypeStrings = {
         { TokenType::Identifier, "Identifier" },
         { TokenType::Keyword, "Keyword" },
+        { TokenType::Return, "Return" },
         { TokenType::Symbol, "Symbol" },
         { TokenType::Type, "Type"},
-        { TokenType::Number, "Number" },
+        { TokenType::Integer, "Integer" },
+        { TokenType::Float, "Float" },
         { TokenType::StringLiteral, "StringLiteral" },
         { TokenType::CharLiteral, "CharLiteral" },
         { TokenType::Whitespace, "Whitespace" },

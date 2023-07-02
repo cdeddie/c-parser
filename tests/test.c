@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-int main()
+int main(void)
 {
-    printf("I love #");
+    printf("My favourite numbers are %d and %f", 5, 3.16);
     return 0;
 }

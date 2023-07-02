@@ -1,4 +1,5 @@
 #include "parser/AST/expression/BinaryExpressionNode.hpp"
+#include "parser/Visitor.hpp"
 
 BinaryExpressionNode::BinaryExpressionNode(
     std::unique_ptr<ExpressionNode> left, 
@@ -7,5 +8,24 @@ BinaryExpressionNode::BinaryExpressionNode(
 )
     : left(std::move(left)), right(std::move(right)), op(op) 
 {
+}
 
+const ExpressionNode& BinaryExpressionNode::getLeft() const
+{
+    return *left;
+}
+
+const ExpressionNode& BinaryExpressionNode::getRight() const
+{
+    return *right;
+}
+
+const std::string& BinaryExpressionNode::getOperator() const
+{
+    return op;
+}
+
+void BinaryExpressionNode::accept(const Visitor& visitor) const
+{
+    visitor.visit(*this);
 }

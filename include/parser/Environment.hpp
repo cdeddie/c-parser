@@ -8,16 +8,16 @@
 class Environment
 {
 public:
-	Environment() = default;
-	~Environment() = default;
+    Environment() = default;
+    ~Environment() = default;
 
-	SymbolTable& getCurrentSymbolTable();
-	void pushScope();
-	void popScope();
+    SymbolTable& getCurrentSymbolTable();
+    void pushScope();
+    void popScope();
 
-	bool exists(const std::string& name) const;
-	const Symbol& lookup(const std::string& name) const;
+    bool exists(const std::string& name) const;
+    const Symbol& lookup(const std::string& name) const;
 
 private:
-	std::stack<SymbolTable> symbolTableStack;
+    std::stack<SymbolTable> symbolTableStack;
 };

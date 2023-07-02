@@ -100,10 +100,12 @@ Token Lexer::identifier()
     }
 
     // Check if the indentifier is a keyword or type
-    static const std::vector<std::string> keywords = {"else", "for", "if", "return", "while"};
+    static const std::vector<std::string> keywords = {"else", "for", "if", "while"};
     static const std::vector<std::string> types = {"char", "float", "int", "void"};
 
-    if (std::find(keywords.begin(), keywords.end(), result) != keywords.end())
+    if (result == "return")
+        return Token(TokenType::Return, result, currentLine, currentColumn);
+    else if (std::find(keywords.begin(), keywords.end(), result) != keywords.end())
         return Token(TokenType::Keyword, result, currentLine, currentColumn);
     else if (std::find(types.begin(), types.end(), result) != types.end())
         return Token(TokenType::Type, result, currentLine, currentColumn);
@@ -114,17 +116,24 @@ Token Lexer::identifier()
 Token Lexer::number() 
 {
     std::string result;
+    bool isFloat = false;
     while (std::isdigit(currentChar) || currentChar == '.') 
     {
-        if (currentChar == '.' && result.find('.') != std::string::npos)
+        if (currentChar == '.')
         {
-            // Error, number has more than one decimal point
-            return Token(TokenType::Error, result, currentLine, currentColumn);
+            if (result.find('.') != std::string::npos)
+            {
+                return Token(TokenType::Error, result, currentLine, currentColumn);
+            }
+            isFloat = true;
         }
         result.push_back(currentChar);
         advance();
     }
-    return Token(TokenType::Number, result, currentLine, currentColumn);
+    if (isFloat)
+        return Token(TokenType::Float, result, currentLine, currentColumn);
+    else 
+        return Token(TokenType::Integer, result, currentLine, currentColumn);
 }
 
 // Loop checks that current is not a closing double quote or EOF, if no closing quote
