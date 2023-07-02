@@ -7,10 +7,14 @@ FunctionDeclarationNode::FunctionDeclarationNode(
     std::unique_ptr<IdentifierNode> functionName, 
     std::vector<std::unique_ptr<ParameterNode>> parameters
 ) 
-    : DeclarationNode(std::move(returnType), std::move(functionName), nullptr), 
+    : DeclarationNode(std::move(returnType), std::move(functionName)), 
       parameters(std::move(parameters))
 {
-    
+}
+
+const std::vector<std::unique_ptr<ParameterNode>>& FunctionDeclarationNode::getParameters() const
+{
+    return parameters;
 }
 
 void FunctionDeclarationNode::accept(const Visitor& visitor) const

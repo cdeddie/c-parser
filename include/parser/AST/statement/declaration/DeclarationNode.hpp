@@ -13,21 +13,18 @@
 class DeclarationNode : public StatementNode 
 {
 public:
-	DeclarationNode(
-		std::unique_ptr<TypeNode> type, 
-		std::unique_ptr<IdentifierNode> identifier, 
-		std::unique_ptr<ExpressionNode> expression
-	);
-	virtual ~DeclarationNode() = default; 
+    DeclarationNode(
+        std::unique_ptr<TypeNode> type, 
+        std::unique_ptr<IdentifierNode> identifier
+    );
+    virtual ~DeclarationNode() = default; 
 
-	const TypeNode& getType() const;
+    const TypeNode& getType() const;
     const IdentifierNode& getIdentifier() const;
-    const ExpressionNode& getExpression() const;
 
     virtual void accept(const Visitor& visitor) const override;
 
 protected:
-	std::unique_ptr<TypeNode> type;
-	std::unique_ptr<IdentifierNode> identifier;
-	std::unique_ptr<ExpressionNode> expression;
+    std::unique_ptr<TypeNode> type;
+    std::unique_ptr<IdentifierNode> identifier;
 };

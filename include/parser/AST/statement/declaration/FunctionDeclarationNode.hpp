@@ -14,6 +14,8 @@ public:
         std::vector<std::unique_ptr<ParameterNode>> parameters
     );
 
+    const std::vector<std::unique_ptr<ParameterNode>>& getParameters() const;
+
     virtual void accept(const Visitor& visitor) const override;
 
 private:

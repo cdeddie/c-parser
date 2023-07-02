@@ -1,6 +1,25 @@
 #include "parser/ParserIncludes.hpp"
 #include "parser/PrintVisitor.hpp"
 
+std::unique_ptr<FunctionDefinitionNode> buildASTTestOne();
+
+int main()
+{
+    PrintVisitor printer;
+    auto functionDefinition = buildASTTestOne();
+    functionDefinition->accept(printer);
+
+    return 0;
+}
+
+/*
+//  int add(int x, int y)
+//  {
+//  	int z = x + y;
+//  	return z;
+//  }
+*/
+
 std::unique_ptr<FunctionDefinitionNode> buildASTTestOne()
 {
     auto returnType = std::make_unique<TypeNode>("int");
@@ -44,11 +63,11 @@ std::unique_ptr<FunctionDefinitionNode> buildASTTestOne()
     return functionDefinition;
 }
 
-int main()
-{
-    PrintVisitor printer;
-    auto functionDefinition = buildASTTestOne();
-    functionDefinition->accept(printer);
-
-    return 0;
-}
+/*
+//  
+//
+//
+//
+//
+//
+*/

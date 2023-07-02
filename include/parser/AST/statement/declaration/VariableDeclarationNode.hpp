@@ -9,7 +9,7 @@ public:
 	VariableDeclarationNode(
 		std::unique_ptr<TypeNode> type, 
 		std::unique_ptr<IdentifierNode> identifier, 
-		std::unique_ptr<ExpressionNode> expression
+		std::unique_ptr<ExpressionNode> init
 	);
 
 	const ExpressionNode& getInit() const;

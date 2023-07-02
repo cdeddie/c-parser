@@ -3,12 +3,11 @@
 
 DeclarationNode::DeclarationNode(
     std::unique_ptr<TypeNode> type, 
-    std::unique_ptr<IdentifierNode> identifier, 
-    std::unique_ptr<ExpressionNode> expression
+    std::unique_ptr<IdentifierNode> identifier
 ) 
-    : type(std::move(type)), identifier(std::move(identifier)), expression(std::move(expression))
+    : type(std::move(type)), identifier(std::move(identifier))
 {
-	
+    
 }
 
 const TypeNode& DeclarationNode::getType() const
@@ -19,11 +18,6 @@ const TypeNode& DeclarationNode::getType() const
 const IdentifierNode& DeclarationNode::getIdentifier() const
 {
     return *identifier;
-}
-
-const ExpressionNode& DeclarationNode::getExpression() const
-{
-    return *expression;
 }
 
 void DeclarationNode::accept(const Visitor& visitor) const

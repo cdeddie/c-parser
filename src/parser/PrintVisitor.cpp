@@ -78,6 +78,7 @@ void PrintVisitor::visit(const BinaryExpressionNode& node) const
     level++;
     // Virtual dispatch mechanism - calls correct visit function based on object type
     node.getLeft().accept(*this);
+    printIndent();
     std::cout << "Op: " << node.getOperator() << std::endl;
     node.getRight().accept(*this);
     level--;
@@ -109,6 +110,7 @@ void PrintVisitor::visit(const UnaryExpressionNode& node) const
     std::cout << "UnaryExpressionNode: " << std::endl;
     level++;
     node.getOperand().accept(*this);
+    printIndent();
     std::cout << "Op: " << node.getOperator() << std::endl;
     level--;
 }
@@ -180,7 +182,11 @@ void PrintVisitor::visit(const FunctionDeclarationNode& node) const
     level++;
     node.getIdentifier().accept(*this);
     node.getType().accept(*this);
-    node.getExpression().accept(*this);
+    
+    for (const auto& parameter : node.getParameters()) 
+    {
+        parameter->accept(*this);
+    }
     level--;
 
 }
