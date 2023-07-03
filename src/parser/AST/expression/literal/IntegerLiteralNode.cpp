@@ -1,8 +1,8 @@
 #include "parser/AST/expression/literal/IntegerLiteralNode.hpp"
 #include "parser/Visitor.hpp"
 
-IntegerLiteralNode::IntegerLiteralNode(int value)
-    : value(value)
+IntegerLiteralNode::IntegerLiteralNode(int value, int line, int column)
+    : LiteralNode(line, column), value(value)
 {
 }
 

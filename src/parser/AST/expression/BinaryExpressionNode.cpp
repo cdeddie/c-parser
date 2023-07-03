@@ -4,9 +4,11 @@
 BinaryExpressionNode::BinaryExpressionNode(
     std::unique_ptr<ExpressionNode> left, 
     std::unique_ptr<ExpressionNode> right, 
-    const std::string& op
+    const std::string& op,
+    int line,
+    int column
 )
-    : left(std::move(left)), right(std::move(right)), op(op) 
+    : ExpressionNode(line, column), left(std::move(left)), right(std::move(right)), op(op)
 {
 }
 

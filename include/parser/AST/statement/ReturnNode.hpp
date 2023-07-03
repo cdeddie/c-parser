@@ -8,7 +8,7 @@
 class ReturnNode : public StatementNode 
 {
 public:
-    ReturnNode(std::unique_ptr<ExpressionNode> expression);
+    ReturnNode(std::unique_ptr<ExpressionNode> expression, int line = 0, int column = 0);
 
     const ExpressionNode& getExpression() const;
 

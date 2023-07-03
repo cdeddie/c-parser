@@ -5,8 +5,8 @@ BlockNode::BlockNode()
 {
 }
 
-BlockNode::BlockNode(std::vector<std::unique_ptr<StatementNode>> statements)
-    : statements(std::move(statements))
+BlockNode::BlockNode(std::vector<std::unique_ptr<StatementNode>> statements, int line, int column)
+    : Node(line, column), statements(std::move(statements))
 {
     // Push back every element in statements to children
     for (auto& statement : this->statements)

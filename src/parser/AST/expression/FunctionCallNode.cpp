@@ -3,9 +3,11 @@
 
 FunctionCallNode::FunctionCallNode(
     std::unique_ptr<IdentifierNode> identifier, 
-    std::vector<std::unique_ptr<ExpressionNode>> arguments
+    std::vector<std::unique_ptr<ExpressionNode>> arguments,
+    int line,
+    int column
 )
-    : identifier(std::move(identifier)), arguments(std::move(arguments))
+    : ExpressionNode(line, column), identifier(std::move(identifier)), arguments(std::move(arguments))
 {
 }
 

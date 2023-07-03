@@ -1,8 +1,8 @@
 #include "parser/AST/expression/literal/StringLiteralNode.hpp"
 #include "parser/Visitor.hpp"
 
-StringLiteralNode::StringLiteralNode(std::string value)
-    : value(std::move(value))
+StringLiteralNode::StringLiteralNode(std::string value, int line, int column)
+    : LiteralNode(line, column), value(value)
 {
 }
 

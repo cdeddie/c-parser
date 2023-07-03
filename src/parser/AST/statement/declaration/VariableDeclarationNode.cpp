@@ -4,9 +4,12 @@
 VariableDeclarationNode::VariableDeclarationNode(
     std::unique_ptr<TypeNode> type,
     std::unique_ptr<IdentifierNode> identifier,
-    std::unique_ptr<ExpressionNode> init
+    std::unique_ptr<ExpressionNode> init,
+    int line,
+    int column
 )
-    : DeclarationNode(std::move(type), std::move(identifier)), init(std::move(init))
+    : DeclarationNode(std::move(type), std::move(identifier), line, column), 
+      init(std::move(init))
 {
 }
 

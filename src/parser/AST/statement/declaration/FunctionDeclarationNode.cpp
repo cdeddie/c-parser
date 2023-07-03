@@ -5,9 +5,11 @@
 FunctionDeclarationNode::FunctionDeclarationNode(
     std::unique_ptr<TypeNode> returnType, 
     std::unique_ptr<IdentifierNode> functionName, 
-    std::vector<std::unique_ptr<ParameterNode>> parameters
+    std::vector<std::unique_ptr<ParameterNode>> parameters,
+    int line,
+    int column
 ) 
-    : DeclarationNode(std::move(returnType), std::move(functionName)), 
+    : DeclarationNode(std::move(returnType), std::move(functionName), line, column), 
       parameters(std::move(parameters))
 {
 }

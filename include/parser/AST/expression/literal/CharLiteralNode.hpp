@@ -5,7 +5,7 @@
 class CharLiteralNode : public LiteralNode
 {
 public:
-    CharLiteralNode(char value);
+    CharLiteralNode(char value, int line = 0, int column = 0);
 
     char getValue() const;
 

@@ -29,3 +29,4 @@ target_include_directories(ASTTest PRIVATE "${PROJECT_SOURCE_DIR}/include")
 # Rename main function to LexerTestMain and ASTTestMain
 set_target_properties(LexerTest PROPERTIES COMPILE_DEFINITIONS "LexerTestMain=main")
 set_target_properties(ASTTest PROPERTIES COMPILE_DEFINITIONS "ASTTestMain=main")
+

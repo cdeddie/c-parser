@@ -15,7 +15,9 @@ class DeclarationNode : public StatementNode
 public:
     DeclarationNode(
         std::unique_ptr<TypeNode> type, 
-        std::unique_ptr<IdentifierNode> identifier
+        std::unique_ptr<IdentifierNode> identifier,
+        int line = 0,
+        int column = 0
     );
     virtual ~DeclarationNode() = default; 
 

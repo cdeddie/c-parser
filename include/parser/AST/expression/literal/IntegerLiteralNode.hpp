@@ -5,7 +5,7 @@
 class IntegerLiteralNode : public LiteralNode
 {
 public:
-    IntegerLiteralNode(int value);
+    IntegerLiteralNode(int value, int line = 0, int column = 0);
 
     int getValue() const;
 

@@ -11,7 +11,9 @@ public:
     ParameterNode();
     ParameterNode(
         std::unique_ptr<TypeNode> type, 
-        std::unique_ptr<IdentifierNode> identifier
+        std::unique_ptr<IdentifierNode> identifier,
+        int line = 0,
+        int column = 0
     );
 
     const TypeNode& getType() const;

@@ -3,11 +3,12 @@
 
 UnaryExpressionNode::UnaryExpressionNode(
     std::unique_ptr<ExpressionNode> operand, 
-    const std::string& op
+    const std::string& op,
+    int line,
+    int column
 )
-    : operand(std::move(operand)), op(op) 
+    : ExpressionNode(line, column), operand(std::move(operand)), op(op)
 {
-    
 }
 
 const ExpressionNode& UnaryExpressionNode::getOperand() const

@@ -7,7 +7,7 @@
 class TypeNode : public Node
 {
 public:
-    TypeNode(const std::string& type);
+    TypeNode(const std::string& type, int line = 0, int column = 0);
     virtual ~TypeNode() = default;
 
     const std::string getType() const;

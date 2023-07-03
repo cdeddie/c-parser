@@ -1,8 +1,8 @@
 #include "parser/AST/expression/literal/CharLiteralNode.hpp"
 #include "parser/Visitor.hpp"
 
-CharLiteralNode::CharLiteralNode(char value)
-    : value(value)
+CharLiteralNode::CharLiteralNode(char value, int line, int column)
+    : LiteralNode(line, column), value(value)
 {
 }
 

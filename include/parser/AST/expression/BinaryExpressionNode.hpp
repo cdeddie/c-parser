@@ -11,7 +11,9 @@ public:
     BinaryExpressionNode(
         std::unique_ptr<ExpressionNode> left, 
         std::unique_ptr<ExpressionNode> right, 
-        const std::string& op
+        const std::string& op,
+        int line = 0,
+        int column = 0
     );
 
     const ExpressionNode& getLeft() const;

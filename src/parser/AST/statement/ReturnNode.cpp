@@ -1,8 +1,8 @@
 #include "parser/AST/statement/ReturnNode.hpp"
 #include "parser/Visitor.hpp"
 
-ReturnNode::ReturnNode(std::unique_ptr<ExpressionNode> expression)
-    : expression(std::move(expression))
+ReturnNode::ReturnNode(std::unique_ptr<ExpressionNode> expression, int line, int column)
+    : StatementNode(line, column), expression(std::move(expression))
 {
 }
 

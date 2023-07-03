@@ -11,7 +11,9 @@ public:
         std::unique_ptr<IdentifierNode> identifier,
         std::unique_ptr<TypeNode> returnType,
         std::vector<std::unique_ptr<ParameterNode>> parameters,
-        std::unique_ptr<BlockNode> body
+        std::unique_ptr<BlockNode> body,
+        int line = 0,
+        int column = 0
     );
 
     virtual void accept(const Visitor& visitor) const override;

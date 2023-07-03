@@ -1,8 +1,8 @@
 #include "parser/AST/expression/VariableReferenceNode.hpp"
 #include "parser/Visitor.hpp"
 
-VariableReferenceNode::VariableReferenceNode(std::unique_ptr<IdentifierNode> identifier)
-    : identifier(std::move(identifier))
+VariableReferenceNode::VariableReferenceNode(std::unique_ptr<IdentifierNode> identifier, int line, int column)
+    : ExpressionNode(line, column), identifier(std::move(identifier))
 {
 }
 

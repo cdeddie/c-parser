@@ -8,7 +8,7 @@
 class VariableReferenceNode : public ExpressionNode
 {
 public:
-    VariableReferenceNode(std::unique_ptr<IdentifierNode> identifier);
+    VariableReferenceNode(std::unique_ptr<IdentifierNode> identifier, int line = 0, int column = 0);
 
     const IdentifierNode& getIdentifier() const;
 

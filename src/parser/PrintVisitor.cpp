@@ -14,7 +14,7 @@ PrintVisitor::~PrintVisitor()
 void PrintVisitor::visit(const BlockNode& node) const
 {
     printIndent();
-    std::cout << "BlockNode: " << std::endl;
+    std::cout << "BlockNode: Line: " << std::endl;
     for (const auto& statement : node.getStatements()) 
     {
         level++;

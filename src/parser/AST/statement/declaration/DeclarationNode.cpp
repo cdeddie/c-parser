@@ -3,9 +3,11 @@
 
 DeclarationNode::DeclarationNode(
     std::unique_ptr<TypeNode> type, 
-    std::unique_ptr<IdentifierNode> identifier
+    std::unique_ptr<IdentifierNode> identifier,
+    int line,
+    int column
 ) 
-    : type(std::move(type)), identifier(std::move(identifier))
+    : StatementNode(line, column), type(std::move(type)), identifier(std::move(identifier))
 {
     
 }

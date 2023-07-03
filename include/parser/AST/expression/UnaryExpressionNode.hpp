@@ -10,7 +10,12 @@
 class UnaryExpressionNode : public ExpressionNode
 {
 public:
-    UnaryExpressionNode(std::unique_ptr<ExpressionNode> operand, const std::string& op);
+    UnaryExpressionNode(
+        std::unique_ptr<ExpressionNode> operand, 
+        const std::string& op,
+        int line = 0,
+        int column = 0
+    );
 
     const ExpressionNode& getOperand() const;
     const std::string& getOperator() const;

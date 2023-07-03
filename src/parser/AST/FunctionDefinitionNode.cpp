@@ -10,9 +10,13 @@ FunctionDefinitionNode::FunctionDefinitionNode(
     std::unique_ptr<IdentifierNode> identifier,
     std::unique_ptr<TypeNode> returnType,
     std::vector<std::unique_ptr<ParameterNode>> parameters,
-    std::unique_ptr<BlockNode> body
+    std::unique_ptr<BlockNode> body,
+    int line,
+    int column
 ) 
-    : identifier(std::move(identifier)), returnType(std::move(returnType)), parameters(std::move(parameters)), body(std::move(body))
+    : Node(line, column), 
+      identifier(std::move(identifier)), returnType(std::move(returnType)), 
+      parameters(std::move(parameters)), body(std::move(body))
 {
 }
 

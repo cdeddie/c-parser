@@ -9,7 +9,12 @@
 class FunctionCallNode : public ExpressionNode
 {
 public:
-    FunctionCallNode(std::unique_ptr<IdentifierNode> identifier, std::vector<std::unique_ptr<ExpressionNode>> arguments);
+    FunctionCallNode(
+        std::unique_ptr<IdentifierNode> identifier, 
+        std::vector<std::unique_ptr<ExpressionNode>> arguments,
+        int line = 0,
+        int column = 0
+    );
 
     const IdentifierNode& getIdentifier() const;
     const std::vector<std::unique_ptr<ExpressionNode>>& getArguments() const;

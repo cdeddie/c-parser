@@ -1,7 +1,8 @@
 #include "parser/AST/TypeNode.hpp"
 #include "parser/Visitor.hpp"
 
-TypeNode::TypeNode(const std::string& type) : type(type)
+TypeNode::TypeNode(const std::string& type, int line, int column) 
+    : Node(line, column), type(type)
 {
 }
 

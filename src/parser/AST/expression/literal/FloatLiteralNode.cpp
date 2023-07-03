@@ -1,8 +1,8 @@
 #include "parser/AST/expression/literal/FloatLiteralNode.hpp"
 #include "parser/Visitor.hpp"
 
-FloatLiteralNode::FloatLiteralNode(float value)
-    : value(value)
+FloatLiteralNode::FloatLiteralNode(float value, int line, int column)
+    : LiteralNode(line, column), value(value)
 {
 }
 

@@ -7,10 +7,10 @@
 class IdentifierNode : public Node
 {
 public:
-    IdentifierNode(const std::string& name);
+    IdentifierNode(const std::string& name, int line = 0, int column = 0);
     virtual ~IdentifierNode() = default;
 
-    std::string getName() const { return name; }
+    const std::string& getName() const;
 
     virtual void accept(const Visitor& visitor) const override;
 private:
