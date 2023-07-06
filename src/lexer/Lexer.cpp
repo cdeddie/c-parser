@@ -8,6 +8,11 @@ Lexer::Lexer(std::istream& input) : input(input), currentChar(0), currentLine(1)
     advance();
 }
 
+bool Lexer::isAtEnd() const
+{
+    return currentChar == '\0';
+}
+
 // Advances to the next character in the input stream
 // get() does not skip whitespace
 void Lexer::advance() 
@@ -70,24 +75,52 @@ char Lexer::peekChar()
 // 
 Token Lexer::peekToken()
 {
-    std::streampos pos = getPosition();
+    LexerPosition lexerPos = getPosition();
     Token token = nextToken();
-    restorePosition(pos);
+    restorePosition(lexerPos);
+    return token;
+}
+
+Token Lexer::peekToken(int n)
+{
+    LexerPosition lexerPos = getPosition();
+    Token token;
+
+    for (int i = 0; i < n; i++)
+    {    
+        token = nextToken();
+    }
+
+    restorePosition(lexerPos);
     return token;
 }
 
 // Gets stream pos, maybe needed for 'undo' reading
-std::streampos Lexer::getPosition() const
+LexerPosition Lexer::getPosition() const
 {
-    return input.tellg();
+    LexerPosition lexerPos;
+    lexerPos.pos = input.tellg();
+    lexerPos.line = currentLine;
+    lexerPos.column = currentColumn;
+    return lexerPos;
 }
 
-void Lexer::restorePosition(std::streampos pos)
+void Lexer::restorePosition(LexerPosition lexerPos)
 {
-    input.seekg(pos);
-    currentLine = 1; //Need to track line numbers
+    input.seekg(lexerPos.pos);
+    currentLine = lexerPos.line;
+    currentColumn = lexerPos.column;
 } 
 
+const int Lexer::getCurrentLine() const
+{
+    return currentLine;
+}
+
+const int Lexer::getCurrentColumn() const
+{
+    return currentColumn;
+}
 
 Token Lexer::identifier()
 {
@@ -100,7 +133,7 @@ Token Lexer::identifier()
     }
 
     // Check if the indentifier is a keyword or type
-    static const std::vector<std::string> keywords = {"else", "for", "if", "while"};
+    static const std::vector<std::string> keywords = {"if", "else", "for","while"};
     static const std::vector<std::string> types = {"char", "float", "int", "void"};
 
     if (result == "return")
@@ -233,13 +266,65 @@ Token Lexer::symbol()
         }
         break;
     case '!':
-        tokenType = TokenType::Exclamation;
+        if (peekChar() == '=') {
+            tokenType = TokenType::NotEquals;
+            sym += "=";
+            advance();
+        } else {
+            tokenType = TokenType::Exclamation;
+        }
         break;
     case '&':
-        tokenType = TokenType::Ampersand;
+        if (peekChar() == '&') {
+            tokenType = TokenType::And;
+            sym += "&";
+            advance();
+        } else {
+            tokenType = TokenType::Ampersand;
+        }
         break;
     case '*':
         tokenType = TokenType::Asterisk;
+        break;
+    case '/':
+        tokenType = TokenType::ForwardSlash;
+        break;
+    case '%':
+        tokenType = TokenType::Modulus;
+        break;
+    case '=':
+        if (peekChar() == '=') {
+            tokenType = TokenType::Equals;
+            sym += "=";
+            advance();
+        } else {
+            tokenType = TokenType::Assignment;
+        }
+        break;
+    case '>':
+        if (peekChar() == '=') {
+            tokenType = TokenType::GreaterThanOrEqual;
+            sym += "=";
+            advance();
+        } else {
+            tokenType = TokenType::GreaterThan;
+        }
+        break;
+    case '<':
+        if (peekChar() == '=') {
+            tokenType = TokenType::LessThanOrEqual;
+            sym += "=";
+            advance();
+        } else {
+            tokenType = TokenType::LessThan;
+        }
+        break;
+    case '|':
+        if (peekChar() == '|') {
+            tokenType = TokenType::Or;
+            sym += "|";
+            advance();
+        }
         break;
     default:
         tokenType = TokenType::Symbol;

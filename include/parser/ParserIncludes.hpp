@@ -1,11 +1,12 @@
 #pragma once
 
-#include "parser/AST/FunctionDefinitionNode.hpp"
+#include "parser/AST/statement/FunctionDefinitionNode.hpp"
 #include "parser/AST/ProgramNode.hpp"
 
-#include "parser/AST/statement/declaration/DeclarationNode.hpp"
-#include "parser/AST/statement/declaration/FunctionDeclarationNode.hpp"
-#include "parser/AST/statement/declaration/VariableDeclarationNode.hpp"
+#include "parser/AST/statement/FunctionDeclarationNode.hpp"
+#include "parser/AST/statement/VariableDeclarationNode.hpp"
+#include "parser/AST/statement/VariableDefinitionNode.hpp"
+#include "parser/AST/statement/ReturnNode.hpp"
 
 #include "parser/AST/expression/ExpressionNode.hpp"
 #include "parser/AST/expression/FunctionCallNode.hpp"
@@ -18,5 +19,3 @@
 #include "parser/AST/expression/literal/FloatLiteralNode.hpp"
 #include "parser/AST/expression/literal/StringLiteralNode.hpp"
 #include "parser/AST/expression/literal/CharLiteralNode.hpp"
-
-#include "parser/AST/statement/ReturnNode.hpp"

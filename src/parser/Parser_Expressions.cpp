@@ -56,7 +56,7 @@ std::unique_ptr<FunctionCallNode> Parser::parseFunctionCall()
     return std::make_unique<FunctionCallNode>(std::move(identifier), std::move(args));
 }
 
-// Need to test this thoroughly
+// Need to test this thoroughly NEEDS UPDATING FOR ENUM CLASS
 std::unique_ptr<UnaryExpressionNode> Parser::parseUnaryExpression() 
 {
     static const std::unordered_map<TokenType, std::string> unaryOpMap = 
@@ -77,11 +77,9 @@ std::unique_ptr<UnaryExpressionNode> Parser::parseUnaryExpression()
         throw std::runtime_error("Unexpected token in unary expression");
     }
 
-    std::string op = opIter->second;
     advance();
 
-    std::unique_ptr<ExpressionNode> operand = parseExpression();
-    return std::make_unique<UnaryExpressionNode>(std::move(operand), op);
+    return nullptr;
 }
 
 // TODO: Requires precedence parsing

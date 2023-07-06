@@ -79,7 +79,7 @@ void PrintVisitor::visit(const BinaryExpressionNode& node) const
     // Virtual dispatch mechanism - calls correct visit function based on object type
     node.getLeft().accept(*this);
     printIndent();
-    std::cout << "Op: " << node.getOperator() << std::endl;
+    std::cout << "Op: " << node.getBinaryOperatorString() << std::endl;
     node.getRight().accept(*this);
     level--;
 }
@@ -111,7 +111,7 @@ void PrintVisitor::visit(const UnaryExpressionNode& node) const
     level++;
     node.getOperand().accept(*this);
     printIndent();
-    std::cout << "Op: " << node.getOperator() << std::endl;
+    std::cout << "Op: " << node.getUnaryOperatorString() << std::endl;
     level--;
 }
 
@@ -169,19 +169,13 @@ void PrintVisitor::visit(const StatementNode& node) const
     std::cout << "Unexpected StatementNode" << std::endl;
 }
 
-void PrintVisitor::visit(const DeclarationNode& node) const
-{
-    // Inherited parent class
-    std::cout << "Unexpected DeclarationNode" << std::endl;
-}
-
 void PrintVisitor::visit(const FunctionDeclarationNode& node) const
 {
     printIndent();
     std::cout << "FunctionDeclarationNode: " << std::endl;
     level++;
     node.getIdentifier().accept(*this);
-    node.getType().accept(*this);
+    node.getReturnType().accept(*this);
     
     for (const auto& parameter : node.getParameters()) 
     {
@@ -195,6 +189,16 @@ void PrintVisitor::visit(const VariableDeclarationNode& node) const
 {
     printIndent();
     std::cout << "VariableDeclarationNode: " << std::endl;
+    level++;
+    node.getType().accept(*this);
+    node.getIdentifier().accept(*this);
+    level--;
+}
+
+void PrintVisitor::visit(const VariableDefinitionNode& node) const
+{
+    printIndent();
+    std::cout << "VariableDefinitionNode: " << std::endl;
     level++;
     node.getType().accept(*this);
     node.getIdentifier().accept(*this);

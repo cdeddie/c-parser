@@ -3,8 +3,6 @@
 #include "parser/SymbolTable.hpp"
 #include <stack>
 
-// TODO: Support nested scopes, use stack of SymbolTables
-
 class Environment
 {
 public:

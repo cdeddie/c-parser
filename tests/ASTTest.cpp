@@ -43,9 +43,9 @@ std::unique_ptr<FunctionDefinitionNode> buildASTTestOne()
 
     auto leftExpression = std::make_unique<VariableReferenceNode>(std::make_unique<IdentifierNode>("x"));
     auto rightExpression = std::make_unique<VariableReferenceNode>(std::make_unique<IdentifierNode>("y"));
-    auto expression = std::make_unique<BinaryExpressionNode>(std::move(leftExpression), std::move(rightExpression), "+");
+    auto expression = std::make_unique<BinaryExpressionNode>(std::move(leftExpression), std::move(rightExpression), BinaryOperatorType::Plus);
 
-    auto variableDeclaration = std::make_unique<VariableDeclarationNode>
+    auto variableDeclaration = std::make_unique<VariableDefinitionNode>
         (std::move(variableType), std::move(variableName), std::move(expression));
 
     auto returnExpression = std::make_unique<VariableReferenceNode>(std::make_unique<IdentifierNode>("z"));
@@ -58,7 +58,7 @@ std::unique_ptr<FunctionDefinitionNode> buildASTTestOne()
     auto block = std::make_unique<BlockNode>(std::move(statements));
 
     auto functionDefinition = std::make_unique<FunctionDefinitionNode>
-        (std::move(functionName), std::move(returnType), std::move(parameters), std::move(block));
+        (std::move(returnType), std::move(functionName), std::move(parameters), std::move(block));
 
     return functionDefinition;
 }

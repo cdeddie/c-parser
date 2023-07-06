@@ -2,32 +2,25 @@
 #include <string>
 
 /* 
-    Lexical token. Uses a TokenType enum class (strongly typed, scoped enums). 
-    Contains two member variables - a TokenType type, and std::string value.
+//  Lexical token. Uses a TokenType enum class (strongly typed, scoped enums). 
+//  Contains two member variables - a TokenType type, and std::string value.
+//  !! c++ compiler catches errors at compile time rather than runtime, because
+//  the c++ type system enforces correct usage of TokenTypes (ie compared to strings)
 */
 
 enum class TokenType 
 {
-    Identifier,
-    Keyword,
-    Return,
-    Type,
-    Symbol,
-    Integer,
-    Float,
-    StringLiteral,
-    CharLiteral,
-    Whitespace,
-    Comment,
-    Semicolon,
-    OpenParen, CloseParen, 
-    OpenBracket, CloseBracket,
-    EndOfFile,
-    Error,
-    Comma,
-    Plus, Minus, Exclamation,
+    Identifier, Keyword, Return, Type, Symbol,
+    Integer, Float, StringLiteral, CharLiteral,
+    Assignment, Whitespace, Comment, Semicolon,
+    OpenParen, CloseParen, OpenBracket, CloseBracket,
+    EndOfFile, Error, Comma,
+    Plus, Minus, Asterisk, Modulus, ForwardSlash,
     Increment, Decrement,
-    Ampersand, Asterisk,
+    Ampersand, Exclamation,
+    Negation, And, Or,
+    Equals, NotEquals, LessThan, GreaterThan,
+    LessThanOrEqual, GreaterThanOrEqual,
     PreprocessorDirective,
 };
 

@@ -3,7 +3,7 @@
 
 UnaryExpressionNode::UnaryExpressionNode(
     std::unique_ptr<ExpressionNode> operand, 
-    const std::string& op,
+    UnaryOperatorType op,
     int line,
     int column
 )
@@ -16,9 +16,26 @@ const ExpressionNode& UnaryExpressionNode::getOperand() const
     return *operand;
 }
 
-const std::string& UnaryExpressionNode::getOperator() const
+const UnaryOperatorType UnaryExpressionNode::getUnaryOperatorType() const
 {
     return op;
+}
+
+const std::string UnaryExpressionNode::getUnaryOperatorString() const
+{
+    switch (op)
+    {
+        case UnaryOperatorType::Negate:
+            return "-";
+        case UnaryOperatorType::Not:
+            return "!";
+        case UnaryOperatorType::Increment:
+            return "++";
+        case UnaryOperatorType::Decrement:
+            return "--";
+        default:
+            return "";
+    }
 }
 
 void UnaryExpressionNode::accept(const Visitor& visitor) const

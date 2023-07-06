@@ -31,9 +31,10 @@ struct FunctionSignature
 struct Symbol 
 {
     std::string name;
-    enum class SymbolType { Int, Float, Bool, Function, Variable } type;
+    enum class SymbolType { Int, Float, Char, Function} type;
     // Potentially more attributes // Parser does not support bool right now
-    std::variant<int, float, char, FunctionSignature> value; // TODO: Understand
+    // Value can take on different types - int, float, char, function signature
+    std::variant<int, float, char, FunctionSignature> value; 
 };
 
 class SymbolTable

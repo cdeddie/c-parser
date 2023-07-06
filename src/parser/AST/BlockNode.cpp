@@ -1,10 +1,6 @@
 #include "parser/AST/BlockNode.hpp"
 #include "parser/Visitor.hpp"
 
-BlockNode::BlockNode()
-{
-}
-
 BlockNode::BlockNode(std::vector<std::unique_ptr<StatementNode>> statements, int line, int column)
     : Node(line, column), statements(std::move(statements))
 {
@@ -18,11 +14,6 @@ BlockNode::BlockNode(std::vector<std::unique_ptr<StatementNode>> statements, int
 const std::vector<std::unique_ptr<StatementNode>>& BlockNode::getStatements() const
 {
     return statements;
-}
-
-void BlockNode::addStatement(std::unique_ptr<StatementNode> statement)
-{
-    statements.push_back(std::move(statement));
 }
 
 void BlockNode::accept(const Visitor& visitor) const

@@ -1,7 +1,7 @@
-#include <stdio.h>
-
-int main(void)
+int main()
 {
-    printf("My favourite numbers are %d and %f", 5, 3.16);
-    return 0;
+    int x = 5;
+    int y = 4;
+    int z = x + y;
+    return z;
 }

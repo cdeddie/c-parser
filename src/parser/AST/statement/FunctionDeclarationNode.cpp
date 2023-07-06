@@ -1,4 +1,4 @@
-#include "parser/AST/statement/declaration/FunctionDeclarationNode.hpp"
+#include "parser/AST/statement/FunctionDeclarationNode.hpp"
 #include "parser/Visitor.hpp"
 
 // returnType, functionName and expression all exist as members of DeclarationNode
@@ -9,14 +9,23 @@ FunctionDeclarationNode::FunctionDeclarationNode(
     int line,
     int column
 ) 
-    : DeclarationNode(std::move(returnType), std::move(functionName), line, column), 
-      parameters(std::move(parameters))
+    : StatementNode(line, column), returnType(std::move(returnType)), functionName(std::move(functionName)), parameters(std::move(parameters)) 
 {
 }
 
 const std::vector<std::unique_ptr<ParameterNode>>& FunctionDeclarationNode::getParameters() const
 {
     return parameters;
+}
+
+const TypeNode& FunctionDeclarationNode::getReturnType() const
+{
+    return *returnType;
+}
+
+const IdentifierNode& FunctionDeclarationNode::getIdentifier() const
+{
+    return *functionName;
 }
 
 void FunctionDeclarationNode::accept(const Visitor& visitor) const

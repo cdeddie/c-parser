@@ -14,6 +14,7 @@ public:
     // Base AST nodes
     virtual void visit(const BlockNode& node) const = 0;
     virtual void visit(const FunctionDefinitionNode& node) const = 0;
+    virtual void visit(const VariableDefinitionNode& node) const = 0;
     virtual void visit(const IdentifierNode& node) const = 0;
     virtual void visit(const ParameterNode& node) const = 0;
     virtual void visit(const ProgramNode& node) const = 0;
@@ -38,7 +39,6 @@ public:
     virtual void visit(const StatementNode& node) const = 0;
 
     // Declaration nodes (under Statement)
-    virtual void visit(const DeclarationNode& node) const = 0;
     virtual void visit(const FunctionDeclarationNode& node) const = 0;
     virtual void visit(const VariableDeclarationNode& node) const = 0;
 };

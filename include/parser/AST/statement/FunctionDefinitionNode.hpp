@@ -2,14 +2,14 @@
 
 #include "parser/AST/BlockNode.hpp"
 #include "parser/AST/ParameterNode.hpp"
+#include "parser/AST/statement/StatementNode.hpp"
 
-class FunctionDefinitionNode : public Node
+class FunctionDefinitionNode : public StatementNode
 {
 public:
-    FunctionDefinitionNode(); // Sets all members to null
     FunctionDefinitionNode(
-        std::unique_ptr<IdentifierNode> identifier,
         std::unique_ptr<TypeNode> returnType,
+        std::unique_ptr<IdentifierNode> identifier,
         std::vector<std::unique_ptr<ParameterNode>> parameters,
         std::unique_ptr<BlockNode> body,
         int line = 0,
@@ -17,11 +17,6 @@ public:
     );
 
     virtual void accept(const Visitor& visitor) const override;
-
-    void setIdentifier(std::unique_ptr<IdentifierNode> identifier);
-    void setReturnType(std::unique_ptr<TypeNode> returnType);
-    void setParameters(std::vector<std::unique_ptr<ParameterNode>> parameters);
-    void setBlock(std::unique_ptr<BlockNode> body);
 
     const IdentifierNode& getIdentifier() const;
     const TypeNode& getReturnType() const;

@@ -4,7 +4,7 @@
 BinaryExpressionNode::BinaryExpressionNode(
     std::unique_ptr<ExpressionNode> left, 
     std::unique_ptr<ExpressionNode> right, 
-    const std::string& op,
+    BinaryOperatorType op,
     int line,
     int column
 )
@@ -22,7 +22,7 @@ const ExpressionNode& BinaryExpressionNode::getRight() const
     return *right;
 }
 
-const std::string& BinaryExpressionNode::getOperator() const
+const BinaryOperatorType BinaryExpressionNode::getBinaryOperator() const
 {
     return op;
 }
@@ -30,4 +30,39 @@ const std::string& BinaryExpressionNode::getOperator() const
 void BinaryExpressionNode::accept(const Visitor& visitor) const
 {
     visitor.visit(*this);
+}
+
+const std::string BinaryExpressionNode::getBinaryOperatorString() const
+{
+    switch (op)
+    {
+        case BinaryOperatorType::Plus:
+            return "+";
+        case BinaryOperatorType::Minus:
+            return "-";
+        case BinaryOperatorType::Multiply:
+            return "*";
+        case BinaryOperatorType::Divide:
+            return "/";
+        case BinaryOperatorType::Modulus:
+            return "%";
+        case BinaryOperatorType::And:
+            return "&&";
+        case BinaryOperatorType::Or:
+            return "||";
+        case BinaryOperatorType::Equals:
+            return "==";
+        case BinaryOperatorType::NotEquals:
+            return "!=";
+        case BinaryOperatorType::LessThan:
+            return "<";
+        case BinaryOperatorType::GreaterThan:
+            return ">";
+        case BinaryOperatorType::LessThanOrEqual:
+            return "<=";
+        case BinaryOperatorType::GreaterThanOrEqual:
+            return ">=";
+        default:
+            return "";
+    }
 }

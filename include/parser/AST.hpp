@@ -2,18 +2,17 @@
 
 #include "parser/Node.hpp"
 #include "parser/AST/ProgramNode.hpp"
+#include "parser/PrintVisitor.hpp"
 #include <memory>
 
 class AST
 {
 public:
-    AST() : root(std::make_unique<ProgramNode>()) {}
+    AST(std::unique_ptr<ProgramNode> node); 
     
-    // void setRoot(std::unique_ptr<Node> r) { root = std::move(r); }
-    // Node* getRoot() { return root.get(); }
-
-    // void traverse(Visitor& visitor) { root->accept(visitor); }
-
+    const ProgramNode& getRoot() const;
+    
+    void printTree(PrintVisitor& visitor);
 private:
-    std::unique_ptr<Node> root;
+    std::unique_ptr<ProgramNode> root;
 };

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "parser/AST/statement/declaration/DeclarationNode.hpp"
 #include "parser/AST/ParameterNode.hpp"
+#include "parser/AST/statement/StatementNode.hpp"
 
 #include <vector>
 
-class FunctionDeclarationNode : public DeclarationNode 
+class FunctionDeclarationNode : public StatementNode
 {
 public:
     FunctionDeclarationNode(
@@ -17,9 +17,13 @@ public:
     );
 
     const std::vector<std::unique_ptr<ParameterNode>>& getParameters() const;
+    const TypeNode& getReturnType() const;
+    const IdentifierNode& getIdentifier() const;
 
     virtual void accept(const Visitor& visitor) const override;
 
 private:
     std::vector<std::unique_ptr<ParameterNode>> parameters;
+    std::unique_ptr<TypeNode> returnType;
+    std::unique_ptr<IdentifierNode> functionName;
 };

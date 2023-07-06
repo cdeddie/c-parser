@@ -33,9 +33,9 @@ public:
     // Statement nodes
     virtual void visit(const ReturnNode& node) const override;
     virtual void visit(const StatementNode& node) const override;
+    virtual void visit(const VariableDefinitionNode& node) const override;
 
     // Declaration nodes (under Statement)
-    virtual void visit(const DeclarationNode& node) const override;
     virtual void visit(const FunctionDeclarationNode& node) const override;
     virtual void visit(const VariableDeclarationNode& node) const override;
 private:
