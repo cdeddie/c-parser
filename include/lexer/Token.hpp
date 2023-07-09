@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <map>
+#include <stdexcept>
 
 /* 
 //  Lexical token. Uses a TokenType enum class (strongly typed, scoped enums). 
@@ -29,15 +31,20 @@ class Token
 public:
     Token(TokenType type, const std::string& value, int line, int column);
     Token();
+
     TokenType getType() const;
     const std::string& getValue() const; 
 
     int getLine() const;
     int getColumn() const;
-    
+
+    std::string typeToString() const;
+    static std::string toString(TokenType type);
 private:
     TokenType type;
     std::string value;
     int line;
     int column;
+
+    static const std::map<TokenType, std::string> tokenTypeStrings;
 };

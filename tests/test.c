@@ -1,7 +1,6 @@
-int main()
+char function(int x, int y, char c);
+
+int function2(int x, int y)
 {
-    int x = 5;
-    int y = 4;
-    int z = x + y;
-    return z;
+    return 2;
 }

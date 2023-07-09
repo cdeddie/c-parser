@@ -3,6 +3,7 @@
 #include "parser/Node.hpp"
 #include "parser/AST.hpp"
 #include "parser/Environment.hpp"
+#include "parser/ParserException.hpp"
 #include "lexer/Lexer.hpp"
 
 #include "parser/ParserIncludes.hpp"
@@ -17,20 +18,18 @@ public:
     explicit Parser(Lexer& lexer);
     std::unique_ptr<AST> parse();
 
-private:
+    void printTokens(int n);
+
+public:
     Lexer& lexer;
     Token currentToken;
     
-    Token peekToken(int n);
-    Token peekToken();
+    Token peekToken(int n) const;
+    Token peekToken() const;
     void advance();
-    void expect(TokenType type, const std::optional<std::string>& value = nullptr);
+    void expect(TokenType type, std::optional<std::string> value = std::nullopt);
 
-    std::string TokenTypeToString(TokenType type);
-
-    Environment env;
-
-    static const std::map<TokenType, std::string> tokenTypeStrings;
+    Environment env; // Probably not needed
 
 // Parse methods for each node
 public:

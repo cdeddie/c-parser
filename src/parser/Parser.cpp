@@ -5,14 +5,29 @@ Parser::Parser(Lexer& lexer) : lexer(lexer), currentToken(lexer.nextToken())
     
 }
 
-Token Parser::peekToken(int n)
+Token Parser::peekToken(int n) const
 {
     return lexer.peekToken(n);
 }
 
-Token Parser::peekToken()
+Token Parser::peekToken() const
 {
     return lexer.peekToken();
+}
+
+// print next n tokens. printTokens(0) prints current token only
+void Parser::printTokens(int n)
+{
+    if (n < 1)
+    {
+        return;
+    }
+    for (int i = 0; i < n; i++)
+    {
+        Token token = peekToken(i);
+        std::cout << "Token " << i + 1 << ": " << token.typeToString() << 
+                    " (line " << token.getLine() << ", column " << token.getColumn() << ")\n";
+    }
 }
 
 void Parser::advance()
@@ -22,7 +37,7 @@ void Parser::advance()
 
 // Optional string parameter, only used for Keywords and Types
 // std::optional needs to be dereferenced to access the value it wraps
-void Parser::expect(TokenType type, const std::optional<std::string>& value)
+void Parser::expect(TokenType type, std::optional<std::string> value)
 {
     if (currentToken.getType() == type && (!value || currentToken.getValue() == *value))
     {
@@ -32,17 +47,9 @@ void Parser::expect(TokenType type, const std::optional<std::string>& value)
     {
         std::string errorMsg = "Unexpected token: " + currentToken.getValue() + 
             " at line " + std::to_string(currentToken.getLine()) + " column " + std::to_string(currentToken.getColumn())
-            + ". Expected: " + TokenTypeToString(type);
+            + ". Expected: " + Token::toString(type);
         throw std::runtime_error(errorMsg);
     }
-}
-
-std::string Parser::TokenTypeToString(TokenType type) {
-    auto it = tokenTypeStrings.find(type);
-    if (it != tokenTypeStrings.end())
-        return it->second;
-    else
-        throw std::runtime_error("Unknown TokenType");
 }
 
 std::unique_ptr<AST> Parser::parse()
@@ -53,7 +60,7 @@ std::unique_ptr<AST> Parser::parse()
 
         if (currentToken.getType() != TokenType::EndOfFile)
         {
-            throw std::runtime_error("Expected end of file");
+            throw ParserException("Unexpected End of File", TokenType::EndOfFile, currentToken);
         }
 
         return std::make_unique<AST>(std::move(programNode));
@@ -69,6 +76,8 @@ std::unique_ptr<AST> Parser::parse()
 std::unique_ptr<ProgramNode> Parser::parseProgram()
 {
     std::vector<std::unique_ptr<StatementNode>> programNodes;
+    
+    std::cout << "Parsing...\n";
 
     while (currentToken.getType() != TokenType::EndOfFile)
     {
@@ -82,16 +91,22 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
             // Functions
             if (peekToken(2).getType() == TokenType::OpenParen)
             {
-                // Declaration
-                if (peekToken(4).getType() == TokenType::Semicolon)
+                int i = 3; // peekToken parameter
+                while (peekToken(i).getType() != TokenType::CloseParen)
                 {
-                    programNodes.push_back(parseFunctionDeclaration());
+                    i++;
                 }
-                // Definition
-                else if (peekToken(4).getType() == TokenType::OpenBracket)
+                std::cout << i << "\n";
+
+                if (peekToken(i+1).getType() == TokenType::OpenBracket)
                 {
                     programNodes.push_back(parseFunctionDefinition());
                 }
+                else if (peekToken(i+1).getType() == TokenType::Semicolon)
+                {
+                    programNodes.push_back(parseFunctionDeclaration());
+                }
+
             }
             // Variables
             else if (peekToken(2).getType() == TokenType::Semicolon || peekToken(2).getType() == TokenType::Assignment)
@@ -100,30 +115,38 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
                 if (peekToken(2).getType() == TokenType::Semicolon)
                 {
                     programNodes.push_back(parseVariableDeclaration());
+                    
                 }
                 // Definition
                 else if (peekToken(2).getType() == TokenType::Assignment)
                 {
                     programNodes.push_back(parseVariableDefinition());
+                    
                 }
             }
             // Errors
             else
             {
-                throw std::runtime_error("Invalid syntax in source file");
+                // Debugging
+                std::cout << "After logic\n";
+
+                throw std::runtime_error("Invalid syntax at line " + std::to_string(lexer.getCurrentLine()) + ", column " + std::to_string(lexer.getCurrentColumn()));
             }
         }
         else 
         {
-            throw std::runtime_error("Expected a type declaration or definition");
+            throw ParserException("Expected a type declaration or definition in parseProgram()", TokenType::Type, currentToken);
         }
     }
+
 
     return std::make_unique<ProgramNode>(std::move(programNodes), currentToken.getLine(), currentToken.getColumn());
 }
 
 std::unique_ptr<FunctionDefinitionNode> Parser::parseFunctionDefinition()
 {
+    std::cout << "Parsing function definition\n";
+
     int startLine = currentToken.getLine();
     int startColumn = currentToken.getColumn();
 
@@ -168,9 +191,10 @@ std::unique_ptr<FunctionDeclarationNode> Parser::parseFunctionDeclaration()
 
 std::unique_ptr<TypeNode> Parser::parseType()
 {
+    std::cout << "Parsing type\n";
     if (currentToken.getType() != TokenType::Type)
     {
-        throw std::runtime_error("Expected a type");
+        throw ParserException("Expected a type", TokenType::Type, currentToken);
     }
     auto typeNode = std::make_unique<TypeNode>(currentToken.getValue(), currentToken.getLine(), currentToken.getColumn());
     advance();
@@ -179,9 +203,10 @@ std::unique_ptr<TypeNode> Parser::parseType()
 
 std::unique_ptr<IdentifierNode> Parser::parseIdentifier()
 {
+    std::cout << "Parsing identifier\n";
     if (currentToken.getType() != TokenType::Identifier)
     {
-        throw std::runtime_error("Expected an identifier ");
+        throw ParserException("Expected an identifier", TokenType::Identifier, currentToken);
     }
     auto identifierNode = std::make_unique<IdentifierNode>(currentToken.getValue(), currentToken.getLine(), currentToken.getColumn());
     advance();
@@ -190,10 +215,19 @@ std::unique_ptr<IdentifierNode> Parser::parseIdentifier()
 
 std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 {
+    std::cout << "Parsing parameters\n";
     std::vector<std::unique_ptr<ParameterNode>> parameters;
 
     // Example: (int x, int y)
     expect(TokenType::OpenParen);
+    
+
+    if (peekToken().getType() == TokenType::CloseParen)
+    {
+        std::cout << "No parameters\n";
+        advance();
+        return parameters;
+    }
 
     while (currentToken.getType() != TokenType::CloseParen)
     {
@@ -224,7 +258,7 @@ std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 
         else if (currentToken.getType() != TokenType::CloseParen)
         {
-            throw std::runtime_error("Expected a comma or closing parentheses in parameter list");
+            throw ParserException("Expected a comma or closing parentheses in parameter list", TokenType::Comma, currentToken);
         }
     }
 
@@ -235,6 +269,7 @@ std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 
 std::unique_ptr<BlockNode> Parser::parseBlock()
 {
+    std::cout << "Parsing block\n";
     int startLine = currentToken.getLine();
     int startColumn = currentToken.getColumn();
 
@@ -242,7 +277,7 @@ std::unique_ptr<BlockNode> Parser::parseBlock()
 
     std::vector<std::unique_ptr<StatementNode>> statements;
 
-    while (currentToken.getType() != TokenType::CloseParen)
+    while (currentToken.getType() != TokenType::CloseBracket)
     {
         auto statement = parseStatement();
         statements.push_back(std::move(statement));
@@ -252,47 +287,3 @@ std::unique_ptr<BlockNode> Parser::parseBlock()
 
     return std::make_unique<BlockNode>(std::move(statements), startLine, startColumn);
 }
-
-// -------------------------- String to enum class mapping --------------------------
-
-const std::map<TokenType, std::string> Parser::tokenTypeStrings = {
-    { TokenType::Identifier, "Identifier" },
-    { TokenType::Keyword, "Keyword" },
-    { TokenType::Return, "Return" },
-    { TokenType::Type, "Type" },
-    { TokenType::Symbol, "Symbol" },
-    { TokenType::Integer, "Integer" },
-    { TokenType::Float, "Float" },
-    { TokenType::StringLiteral, "StringLiteral" },
-    { TokenType::CharLiteral, "CharLiteral" },
-    { TokenType::Assignment, "Assignment" },
-    { TokenType::Whitespace, "Whitespace" },
-    { TokenType::Comment, "Comment" },
-    { TokenType::EndOfFile, "EndOfFile" },
-    { TokenType::Error, "Error" },
-    { TokenType::Semicolon, "Semicolon" },
-    { TokenType::OpenParen, "OpenParen" },
-    { TokenType::CloseParen, "CloseParen" },
-    { TokenType::OpenBracket, "OpenBracket" },
-    { TokenType::CloseBracket, "CloseBracket" },
-    { TokenType::Comma, "Comma" },
-    { TokenType::Plus, "Plus" },
-    { TokenType::Minus, "Minus" },
-    { TokenType::Asterisk, "Asterisk" },
-    { TokenType::Modulus, "Modulus" },
-    { TokenType::ForwardSlash, "ForwardSlash" },
-    { TokenType::Increment, "Increment" },
-    { TokenType::Decrement, "Decrement" },
-    { TokenType::Ampersand, "Ampersand" },
-    { TokenType::Exclamation, "Exclamation" },
-    { TokenType::Negation, "Negation" },
-    { TokenType::And, "And" },
-    { TokenType::Or, "Or" },
-    { TokenType::Equals, "Equals" },
-    { TokenType::NotEquals, "NotEquals" },
-    { TokenType::LessThan, "LessThan" },
-    { TokenType::GreaterThan, "GreaterThan" },
-    { TokenType::LessThanOrEqual, "LessThanOrEqual" },
-    { TokenType::GreaterThanOrEqual, "GreaterThanOrEqual" },
-    { TokenType::PreprocessorDirective, "PreprocessorDirective" }
-};

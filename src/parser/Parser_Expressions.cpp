@@ -102,7 +102,9 @@ std::unique_ptr<LiteralNode> Parser::parseLiteral()
 }
 
 std::unique_ptr<IntegerLiteralNode> Parser::parseIntegerLiteral() {
-    return nullptr;
+    int value = std::stoi(currentToken.getValue());
+    advance();
+    return std::make_unique<IntegerLiteralNode>(value);
 }
 
 std::unique_ptr<FloatLiteralNode> Parser::parseFloatLiteral() {

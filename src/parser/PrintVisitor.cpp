@@ -14,7 +14,7 @@ PrintVisitor::~PrintVisitor()
 void PrintVisitor::visit(const BlockNode& node) const
 {
     printIndent();
-    std::cout << "BlockNode: Line: " << std::endl;
+    std::cout << "BlockNode: " << std::endl;
     for (const auto& statement : node.getStatements()) 
     {
         level++;
@@ -60,9 +60,15 @@ void PrintVisitor::visit(const ParameterNode& node) const
 
 void PrintVisitor::visit(const ProgramNode& node) const
 {
-    // TODO: Implement ProgramNode visit
     printIndent();
     std::cout << "ProgramNode: " << std::endl;
+
+    level++;
+    for (const auto& statement : node.getStatements()) 
+    { 
+        statement->accept(*this);
+    }
+    level--;
 }
 
 void PrintVisitor::visit(const TypeNode& node) const

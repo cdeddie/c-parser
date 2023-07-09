@@ -2,6 +2,8 @@
 
 #include <string>
 #include <istream>
+#include <iostream>
+#include <deque>
 #include "lexer/Token.hpp"
 
 /* 
@@ -9,14 +11,6 @@
     Constructor prevents implicit conversions
 
 */
-
-// Used for getting and restoring the position of the lexer
-struct LexerPosition
-{
-    std::streampos pos;
-    int line;
-    int column;
-};
 
 class Lexer 
 {
@@ -27,19 +21,22 @@ public:
     Token nextToken();
     Token peekToken();
     Token peekToken(int n);
-    char peekChar();
+    int peekChar();
 
-    const int getCurrentLine() const;
-    const int getCurrentColumn() const;
-    
-    LexerPosition getPosition() const;
-    void restorePosition(LexerPosition lexerPos);
+    int getCurrentLine() const;
+    int getCurrentColumn() const;
+
+    void printNextTokens(int n);
 
 private:
     std::istream& input;
-    char currentChar;
+    std::deque<Token> tokenQueue;
+
+    int currentChar;
     int currentLine;
     int currentColumn;
+
+    void enqueueToken();
     void advance();
 
     Token identifier();

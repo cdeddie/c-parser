@@ -6,21 +6,28 @@
 Lexer::Lexer(std::istream& input) : input(input), currentChar(0), currentLine(1), currentColumn(0) 
 {
     advance();
+    enqueueToken();
 }
 
+// true if EOF, false otherwise
 bool Lexer::isAtEnd() const
 {
-    return currentChar == '\0';
+    return currentChar == EOF;
 }
 
 // Advances to the next character in the input stream
 // get() does not skip whitespace
 void Lexer::advance() 
 {
+    if (currentChar == EOF)
+    {
+        return;
+    }
+
     if (currentChar == '\n')
     {
         currentLine++;
-        currentColumn = 0;
+        currentColumn = 1;
     }
     else
     {
@@ -30,94 +37,124 @@ void Lexer::advance()
     if (input)
         currentChar = input.get();
     else
-        currentChar = '\0';
+        currentChar = EOF;
+}
+
+Token Lexer::nextToken() 
+{
+    Token token = tokenQueue.front();
+    tokenQueue.pop_front();
+    enqueueToken();
+    return token;
 }
 
 // Core of lexical analysis, analyses the currentChar
-Token Lexer::nextToken() 
+void Lexer::enqueueToken()
 {
-    while (currentChar != '\0') 
+    while (currentChar != EOF)
     {
-        if (std::isspace(currentChar)) 
+        if (std::isspace(currentChar))
         {
             advance();
             continue;
-        } 
-        else if (std::isalpha(currentChar) || currentChar == '_') 
-            return identifier();
+        }
+        else if (std::isalpha(currentChar) || currentChar == '_')
+        {
+            tokenQueue.push_back(identifier());
+            return;
+        }
         else if (std::isdigit(currentChar))
-            return number();
+        {
+            tokenQueue.push_back(number());
+            return;
+        }
         else if (currentChar == '"')
-            return stringLiteral();
-        else if (currentChar == '\'') 
-            return charLiteral();
+        {
+            tokenQueue.push_back(stringLiteral());
+            return;
+        }
+        else if (currentChar == '\'')
+        {
+            tokenQueue.push_back(charLiteral());
+            return;
+        }
         else if (currentChar == '#')
-            return preprocessorDirective();
-        else 
-            return symbol();
+        {
+            tokenQueue.push_back(preprocessorDirective());
+            return;
+        }
+        else
+        {
+            tokenQueue.push_back(symbol());
+            return;
+        }
 
         advance();
     }
-    return Token(TokenType::EndOfFile, "", currentLine, currentColumn);
+    tokenQueue.push_back(Token(TokenType::EndOfFile, "", currentLine, currentColumn));
+}
+
+
+void Lexer::printNextTokens(int n)
+{
+    if (tokenQueue.empty())
+    {
+        std::cout << "No tokens available.\n";
+        return;
+    }
+    
+    std::cout << "Current Token: " << tokenQueue[0].typeToString() << 
+                " (line " << tokenQueue[0].getLine() << ", column " << tokenQueue[0].getColumn() << ")\n";
+                
+    if (n < 1)
+    {
+        return;
+    }
+    
+    while (tokenQueue.size() <= n)
+    {
+        enqueueToken();
+    }
+    
+    for (int i = 1; i <= n; i++)
+    {
+        std::cout << "Token " << i << ": " << tokenQueue[i].typeToString() << 
+                    " (line " << tokenQueue[i].getLine() << ", column " << tokenQueue[i].getColumn() << ")\n";
+    }
 }
 
 // Stack overflow prevention for symbol ?
-char Lexer::peekChar()
+int Lexer::peekChar()
 {
-    char nextChar;
+    int nextChar;
     if (input.peek() != EOF)
         nextChar = input.peek();
     else
-        nextChar = '\0';
+        nextChar = EOF;
     return nextChar;
 }
 
 // 
 Token Lexer::peekToken()
 {
-    LexerPosition lexerPos = getPosition();
-    Token token = nextToken();
-    restorePosition(lexerPos);
-    return token;
+    return tokenQueue.front();
 }
 
 Token Lexer::peekToken(int n)
 {
-    LexerPosition lexerPos = getPosition();
-    Token token;
-
-    for (int i = 0; i < n; i++)
-    {    
-        token = nextToken();
+    while (tokenQueue.size() < n)
+    {
+        enqueueToken();
     }
-
-    restorePosition(lexerPos);
-    return token;
+    return tokenQueue[n - 1];
 }
 
-// Gets stream pos, maybe needed for 'undo' reading
-LexerPosition Lexer::getPosition() const
-{
-    LexerPosition lexerPos;
-    lexerPos.pos = input.tellg();
-    lexerPos.line = currentLine;
-    lexerPos.column = currentColumn;
-    return lexerPos;
-}
-
-void Lexer::restorePosition(LexerPosition lexerPos)
-{
-    input.seekg(lexerPos.pos);
-    currentLine = lexerPos.line;
-    currentColumn = lexerPos.column;
-} 
-
-const int Lexer::getCurrentLine() const
+int Lexer::getCurrentLine() const
 {
     return currentLine;
 }
 
-const int Lexer::getCurrentColumn() const
+int Lexer::getCurrentColumn() const
 {
     return currentColumn;
 }
@@ -126,6 +163,9 @@ Token Lexer::identifier()
 {
     // While currentChar is alphanumeric
     std::string result;
+
+    int line = currentLine;
+    int column = currentColumn;
     while (std::isalnum(currentChar) || currentChar == '_')
     {
         result.push_back(currentChar);
@@ -137,18 +177,20 @@ Token Lexer::identifier()
     static const std::vector<std::string> types = {"char", "float", "int", "void"};
 
     if (result == "return")
-        return Token(TokenType::Return, result, currentLine, currentColumn);
+        return Token(TokenType::Return, result, line, column);
     else if (std::find(keywords.begin(), keywords.end(), result) != keywords.end())
-        return Token(TokenType::Keyword, result, currentLine, currentColumn);
+        return Token(TokenType::Keyword, result, line, column);
     else if (std::find(types.begin(), types.end(), result) != types.end())
-        return Token(TokenType::Type, result, currentLine, currentColumn);
+        return Token(TokenType::Type, result, line, column);
     else
-        return Token(TokenType::Identifier, result, currentLine, currentColumn);
+        return Token(TokenType::Identifier, result, line, column);
 }
 
 Token Lexer::number() 
 {
     std::string result;
+    int line = currentLine;
+    int column = currentColumn;
     bool isFloat = false;
     while (std::isdigit(currentChar) || currentChar == '.') 
     {
@@ -156,7 +198,7 @@ Token Lexer::number()
         {
             if (result.find('.') != std::string::npos)
             {
-                return Token(TokenType::Error, result, currentLine, currentColumn);
+                return Token(TokenType::Error, result, line, column);
             }
             isFloat = true;
         }
@@ -164,9 +206,9 @@ Token Lexer::number()
         advance();
     }
     if (isFloat)
-        return Token(TokenType::Float, result, currentLine, currentColumn);
+        return Token(TokenType::Float, result, line, column);
     else 
-        return Token(TokenType::Integer, result, currentLine, currentColumn);
+        return Token(TokenType::Integer, result, line, column);
 }
 
 // Loop checks that current is not a closing double quote or EOF, if no closing quote
@@ -174,10 +216,12 @@ Token Lexer::number()
 Token Lexer::stringLiteral()
 {
     std::string result;
+    int line = currentLine;
+    int column = currentColumn;
     result.push_back(currentChar);
     advance();
 
-    while (currentChar != '"' && currentChar != '\0') 
+    while (currentChar != '"' && currentChar != EOF) 
     {
         result.push_back(currentChar);
         advance();
@@ -187,11 +231,11 @@ Token Lexer::stringLiteral()
     {
         result.push_back(currentChar);
         advance();
-        return Token(TokenType::StringLiteral, result, currentLine, currentColumn);
+        return Token(TokenType::StringLiteral, result, line, column);
     } 
     else 
     {
-        return Token(TokenType::Error, result, currentLine, currentColumn);
+        return Token(TokenType::Error, result, line, column);
     }
 }
 
@@ -199,10 +243,12 @@ Token Lexer::stringLiteral()
 Token Lexer::charLiteral() 
 {
     std::string result;
+    int line = currentLine;
+    int column = currentColumn;
     result.push_back(currentChar);
     advance();
 
-    if (currentChar != '\'' && currentChar != '\0') 
+    if (currentChar != '\'' && currentChar != EOF) 
     {
         result.push_back(currentChar);
         advance();
@@ -212,19 +258,22 @@ Token Lexer::charLiteral()
     {
         result.push_back(currentChar);
         advance();
-        return Token(TokenType::CharLiteral, result, currentLine, currentColumn);
+        return Token(TokenType::CharLiteral, result, line, column);
     } else 
     {
-        return Token(TokenType::Error, result, currentLine, currentColumn);
+        return Token(TokenType::Error, result, line, column);
     }
 }
 
 Token Lexer::symbol() 
 {
-    if (currentChar == '\0')
+    if (currentChar == EOF)
         return Token(TokenType::EndOfFile, "", currentLine, currentColumn);
     
-    std::string sym(1, currentChar);
+    int line = currentLine;
+    int column = currentColumn;
+
+    std::string sym(1, static_cast<char>(currentChar));
     TokenType tokenType;
 
     switch (currentChar)
@@ -331,18 +380,21 @@ Token Lexer::symbol()
         break;
     }
 
+    Token token = Token(tokenType, sym, line, column);
     advance();
-    return Token(tokenType, sym, currentLine, currentColumn);
+    return token;
 }
 
 Token Lexer::preprocessorDirective()
 {
     std::string result;
-    while (currentChar != '\n' && currentChar != '\0')
+    int line = currentLine;
+    int column = currentColumn;
+    while (currentChar != '\n' && currentChar != EOF)
     {
         result.push_back(currentChar);
         advance();
     }
     // Differentiate between #include, #define
-    return Token(TokenType::PreprocessorDirective, result, currentLine, currentColumn);
+    return Token(TokenType::PreprocessorDirective, result, line, column);
 }

@@ -10,3 +10,8 @@ ProgramNode::ProgramNode(std::vector<std::unique_ptr<StatementNode>> programNode
     : Node(line, column), programNodes(std::move(programNodes))
 {
 }
+
+const std::vector<std::unique_ptr<StatementNode>>& ProgramNode::getStatements() const
+{
+    return programNodes;
+}
