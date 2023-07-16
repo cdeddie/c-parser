@@ -6,10 +6,10 @@
 #include <vector>
 #include <memory>
 
-class FunctionCallNode : public ExpressionNode
+class FunctionCallExpressionNode : public ExpressionNode
 {
 public:
-    FunctionCallNode(
+    FunctionCallExpressionNode(
         std::unique_ptr<IdentifierNode> identifier, 
         std::vector<std::unique_ptr<ExpressionNode>> arguments,
         int line = 0,

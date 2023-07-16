@@ -14,7 +14,6 @@ public:
     // Base AST nodes
     virtual void visit(const BlockNode& node) const = 0;
     virtual void visit(const FunctionDefinitionNode& node) const = 0;
-    virtual void visit(const VariableDefinitionNode& node) const = 0;
     virtual void visit(const IdentifierNode& node) const = 0;
     virtual void visit(const ParameterNode& node) const = 0;
     virtual void visit(const ProgramNode& node) const = 0;
@@ -23,7 +22,7 @@ public:
     // Expression nodes
     virtual void visit(const BinaryExpressionNode& node) const = 0;
     virtual void visit(const ExpressionNode& node) const = 0;
-    virtual void visit(const FunctionCallNode& node) const = 0;
+    virtual void visit(const FunctionCallExpressionNode& node) const = 0;
     virtual void visit(const UnaryExpressionNode& node) const = 0;
     virtual void visit(const VariableReferenceNode& node) const = 0;
 
@@ -37,6 +36,8 @@ public:
     // Statement nodes
     virtual void visit(const ReturnNode& node) const = 0;
     virtual void visit(const StatementNode& node) const = 0;
+    virtual void visit(const VariableDefinitionNode& node) const = 0;
+    virtual void visit(const FunctionCallStatementNode& node) const = 0;
 
     // Declaration nodes (under Statement)
     virtual void visit(const FunctionDeclarationNode& node) const = 0;

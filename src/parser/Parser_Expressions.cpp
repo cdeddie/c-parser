@@ -2,12 +2,24 @@
 
 std::unique_ptr<ExpressionNode> Parser::parseExpression()
 {
+    auto left = parsePrimaryExpression();
+
+    // If the next token is a binary operator, parse a binary expression.
+    if (isBinaryOperator(currentToken)) {
+        left = parseBinaryExpression(0, std::move(left));
+    }
+
+    return left;
+}
+
+std::unique_ptr<ExpressionNode> Parser::parsePrimaryExpression()
+{
     switch (currentToken.getType())
     {
         // Case for function call or variable ref
         case TokenType::Identifier:
             if (peekToken().getType() == TokenType::OpenParen)
-                return parseFunctionCall();
+                return parseFunctionCallExpression();
             else
                 return parseVariableReference();
 
@@ -22,70 +34,181 @@ std::unique_ptr<ExpressionNode> Parser::parseExpression()
             return parseStringLiteral();
 
         // Unary expression (+, -, ! etc)
-        case TokenType::Plus:
         case TokenType::Minus:
         case TokenType::Exclamation:
         case TokenType::Increment:
         case TokenType::Decrement:
         case TokenType::Ampersand:
         case TokenType::Asterisk:
+            std::cout << "Recognized unary expression\n";
             return parseUnaryExpression();
 
-        
         default:
             throw std::runtime_error("Unexpected token in expression");
-
     }
 }
 
 // identifier(expression_list)
-std::unique_ptr<FunctionCallNode> Parser::parseFunctionCall() 
+std::unique_ptr<FunctionCallExpressionNode> Parser::parseFunctionCallExpression() 
 {
+    int startLine = currentToken.getLine();
+    int startColumn = currentToken.getColumn();
     std::unique_ptr<IdentifierNode> identifier = parseIdentifier();
     expect(TokenType::OpenParen);
     std::vector<std::unique_ptr<ExpressionNode>> args;
 
     while(currentToken.getType() != TokenType::CloseParen)
     {
-        args.emplace_back(parseExpression());
+        args.push_back(parseExpression());
         if (currentToken.getType() == TokenType::Comma)
             advance();
     }
 
     expect(TokenType::CloseParen);
-    return std::make_unique<FunctionCallNode>(std::move(identifier), std::move(args));
+    return std::make_unique<FunctionCallExpressionNode>(std::move(identifier), std::move(args), startLine, startColumn);
+}
+
+// -------- UnaryOperator helpers -------- //
+
+Parser::UnaryOperatorNodeType Parser::getUnaryOperatorNodeType(const Token& token)
+{
+    switch(token.getType())
+    {
+        case TokenType::Increment:
+        case TokenType::Decrement:
+        case TokenType::Exclamation:
+        case TokenType::Minus:
+        case TokenType::Ampersand:
+            return UnaryOperatorNodeType::Prefix;
+        case TokenType::Identifier:
+            if (peekToken().getType() == TokenType::Increment || peekToken().getType() == TokenType::Decrement)
+            {
+                return UnaryOperatorNodeType::Postfix;
+            }
+        default:
+            return UnaryOperatorNodeType::None;
+                                         
+    }
+}
+
+UnaryOperatorType Parser::tokenToUnaryOperatorType(const Token& token) {
+    std::string tokenValue = token.getValue();
+
+    if (tokenValue == "++")
+        return UnaryOperatorType::Increment;
+    else if (tokenValue == "--")
+        return UnaryOperatorType::Decrement;
+    else if (tokenValue == "!")
+        return UnaryOperatorType::Not;
+    else if (tokenValue == "-")
+        return UnaryOperatorType::Negate;
+    else
+        throw std::runtime_error("Unexpected token value for UnaryOperatorNode operator: " + tokenValue);
+
 }
 
 // Need to test this thoroughly NEEDS UPDATING FOR ENUM CLASS
 std::unique_ptr<UnaryExpressionNode> Parser::parseUnaryExpression() 
 {
-    static const std::unordered_map<TokenType, std::string> unaryOpMap = 
-    {
-        {TokenType::Plus, "+"},
-        {TokenType::Minus, "-"},
-        {TokenType::Exclamation, "!"},
-        {TokenType::Increment, "++"},
-        {TokenType::Decrement, "--"},
-        {TokenType::Ampersand, "&"},
-        {TokenType::Asterisk, "*"}
-    };
+    UnaryOperatorNodeType opType = getUnaryOperatorNodeType(currentToken);
+    std::unique_ptr<ExpressionNode> expr;
 
-    TokenType opType = currentToken.getType();
-    auto opIter = unaryOpMap.find(opType);
-    if (opIter == unaryOpMap.end())
+    if (opType == UnaryOperatorNodeType::Prefix)
     {
-        throw std::runtime_error("Unexpected token in unary expression");
+        UnaryOperatorType op = tokenToUnaryOperatorType(currentToken);
+        advance();
+        expr = parseExpression();
+        return std::make_unique<UnaryExpressionNode>(std::move(expr), op);
     }
-
-    advance();
+    
+    expr = parseExpression();
+    
+    if (opType == UnaryOperatorNodeType::Postfix)
+    {
+        UnaryOperatorType op = tokenToUnaryOperatorType(currentToken);
+        advance();
+        return std::make_unique<UnaryExpressionNode>(std::move(expr), op);
+    }
 
     return nullptr;
 }
 
-// TODO: Requires precedence parsing
-std::unique_ptr<BinaryExpressionNode> Parser::parseBinaryExpression()
+// -------- BinaryOperator helpers -------- //
+bool Parser::isBinaryOperator(const Token& token)
 {
-    return nullptr;
+    switch(token.getType())
+    {
+        case TokenType::Plus:
+        case TokenType::Minus:
+        case TokenType::Asterisk:
+        case TokenType::ForwardSlash:
+        case TokenType::Modulus:
+            return true;
+        default:
+            return false;
+    }
+}
+
+int Parser::getBinaryOperatorPrecendence(const Token& token)
+{
+    if (!isBinaryOperator(token))
+        return -1;
+
+    switch(token.getType())
+    {
+        case TokenType::Plus:
+        case TokenType::Minus:
+            return 1;
+        case TokenType::Asterisk:
+        case TokenType::ForwardSlash:
+        case TokenType::Modulus:
+            return 2;
+        default:
+            return -1;
+    }
+}
+
+BinaryOperatorType Parser::tokenToBinaryOperatorType(const Token& token)
+{
+    switch(token.getType())
+    {
+        case TokenType::Plus:
+            return BinaryOperatorType::Plus;
+        case TokenType::Minus:
+            return BinaryOperatorType::Minus;
+        case TokenType::Asterisk:
+            return BinaryOperatorType::Multiply;
+        case TokenType::ForwardSlash:
+            return BinaryOperatorType::Divide;
+        case TokenType::Modulus:
+            return BinaryOperatorType::Modulus;
+        default:
+            throw std::runtime_error("Unexpected token type for binary operator");
+    }
+}
+
+// TODO: Requires precedence parsing
+std::unique_ptr<ExpressionNode> Parser::parseBinaryExpression(int exprPrec, std::unique_ptr<ExpressionNode> left)
+{
+    while (true)
+    {
+        int tokPrec = getBinaryOperatorPrecendence(currentToken);
+
+        // Base case
+        if (tokPrec < exprPrec)
+            return left;
+        
+        BinaryOperatorType binOp = tokenToBinaryOperatorType(currentToken);
+        advance();
+
+        auto right = parseExpression();
+
+        int nextPrec = getBinaryOperatorPrecendence(currentToken);
+        if (tokPrec < nextPrec)
+            right = parseBinaryExpression(tokPrec + 1, std::move(right));
+        
+        left = std::make_unique<BinaryExpressionNode>(std::move(left), std::move(right), binOp);
+    }
 }
 
 std::unique_ptr<VariableReferenceNode> Parser::parseVariableReference()
@@ -95,10 +218,21 @@ std::unique_ptr<VariableReferenceNode> Parser::parseVariableReference()
 }
 
 // ---------- Literal parsing ---------- /
-
 std::unique_ptr<LiteralNode> Parser::parseLiteral() 
 {
-    return nullptr;
+    switch (currentToken.getType())
+    {
+        case TokenType::Integer:
+            return parseIntegerLiteral();
+        case TokenType::Float:
+            return parseFloatLiteral();
+        case TokenType::CharLiteral:
+            return parseCharLiteral();
+        case TokenType::StringLiteral:
+            return parseStringLiteral();
+        default:
+            throw std::runtime_error("Unexpected token in literal");
+    }
 }
 
 std::unique_ptr<IntegerLiteralNode> Parser::parseIntegerLiteral() {
@@ -108,13 +242,19 @@ std::unique_ptr<IntegerLiteralNode> Parser::parseIntegerLiteral() {
 }
 
 std::unique_ptr<FloatLiteralNode> Parser::parseFloatLiteral() {
-    return nullptr;
+    float value = std::stof(currentToken.getValue());
+    advance();
+    return std::make_unique<FloatLiteralNode>(value);
 }
 
 std::unique_ptr<StringLiteralNode> Parser::parseStringLiteral() {
-    return nullptr;
+    std::string value = currentToken.getValue();
+    advance();
+    return std::make_unique<StringLiteralNode>(value);
 }
 
 std::unique_ptr<CharLiteralNode> Parser::parseCharLiteral() {
-    return nullptr;
+    char value = currentToken.getValue()[1];
+    advance();
+    return std::make_unique<CharLiteralNode>(value);
 }

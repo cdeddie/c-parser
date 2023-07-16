@@ -1,7 +1,7 @@
-#include "parser/AST/expression/FunctionCallNode.hpp"
+#include "parser/AST/expression/FunctionCallExpressionNode.hpp"
 #include "parser/Visitor.hpp"
 
-FunctionCallNode::FunctionCallNode(
+FunctionCallExpressionNode::FunctionCallExpressionNode(
     std::unique_ptr<IdentifierNode> identifier, 
     std::vector<std::unique_ptr<ExpressionNode>> arguments,
     int line,
@@ -11,17 +11,17 @@ FunctionCallNode::FunctionCallNode(
 {
 }
 
-const IdentifierNode& FunctionCallNode::getIdentifier() const
+const IdentifierNode& FunctionCallExpressionNode::getIdentifier() const
 {
     return *identifier;
 }
 
-const std::vector<std::unique_ptr<ExpressionNode>>& FunctionCallNode::getArguments() const
+const std::vector<std::unique_ptr<ExpressionNode>>& FunctionCallExpressionNode::getArguments() const
 {
     return arguments;
 }
 
-void FunctionCallNode::accept(const Visitor& visitor) const
+void FunctionCallExpressionNode::accept(const Visitor& visitor) const
 {
     visitor.visit(*this);
 }

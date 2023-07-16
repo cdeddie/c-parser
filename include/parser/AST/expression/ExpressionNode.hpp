@@ -1,8 +1,8 @@
 #pragma once
 
-#include "parser/Node.hpp"
+#include "parser/AST/statement/StatementNode.hpp"
 
-class ExpressionNode : public Node
+class ExpressionNode : public StatementNode
 {
 public:
     ExpressionNode(int line = 0, int column = 0);

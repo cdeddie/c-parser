@@ -20,7 +20,7 @@ public:
 
     void printTokens(int n);
 
-public:
+private:
     Lexer& lexer;
     Token currentToken;
     
@@ -44,9 +44,18 @@ public:
 
     // Expressions
     std::unique_ptr<ExpressionNode> parseExpression();
-    std::unique_ptr<FunctionCallNode> parseFunctionCall();
+    std::unique_ptr<ExpressionNode> parsePrimaryExpression();
+    std::unique_ptr<FunctionCallExpressionNode> parseFunctionCallExpression();
     std::unique_ptr<UnaryExpressionNode> parseUnaryExpression();
-    std::unique_ptr<BinaryExpressionNode> parseBinaryExpression();
+
+    enum class UnaryOperatorNodeType { Prefix, Postfix, None };
+    UnaryOperatorNodeType getUnaryOperatorNodeType(const Token& token);
+    UnaryOperatorType tokenToUnaryOperatorType(const Token& token);
+
+    bool isBinaryOperator(const Token& token);
+    int getBinaryOperatorPrecendence(const Token& token);
+    BinaryOperatorType tokenToBinaryOperatorType(const Token& token);
+    std::unique_ptr<ExpressionNode> parseBinaryExpression(int exprPrec, std::unique_ptr<ExpressionNode> left);
     std::unique_ptr<VariableReferenceNode> parseVariableReference();
     
     std::unique_ptr<LiteralNode> parseLiteral();
@@ -58,6 +67,7 @@ public:
     // Statements
     std::unique_ptr<StatementNode> parseStatement();
     std::unique_ptr<ReturnNode> parseReturn();
+    std::unique_ptr<FunctionCallStatementNode> parseFunctionCallStatement();
     
     std::unique_ptr<VariableDefinitionNode> parseVariableDefinition();
     std::unique_ptr<VariableDeclarationNode> parseVariableDeclaration();

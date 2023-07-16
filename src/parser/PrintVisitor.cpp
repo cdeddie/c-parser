@@ -96,10 +96,10 @@ void PrintVisitor::visit(const ExpressionNode& node) const
     std::cout << "Unexpected ExpressionNode" << std::endl;
 }
 
-void PrintVisitor::visit(const FunctionCallNode& node) const
+void PrintVisitor::visit(const FunctionCallExpressionNode& node) const
 {
     printIndent();
-    std::cout << "FunctionCallNode: " << std::endl;
+    std::cout << "FunctionCallExpressionNode: " << std::endl;
     level++;
     node.getIdentifier().accept(*this);
 
@@ -209,6 +209,20 @@ void PrintVisitor::visit(const VariableDefinitionNode& node) const
     node.getType().accept(*this);
     node.getIdentifier().accept(*this);
     node.getInit().accept(*this);
+    level--;
+}
+
+void PrintVisitor::visit(const FunctionCallStatementNode& node) const
+{
+    printIndent();
+    std::cout << "FunctionCallStatementNode: " << std::endl;
+    level++;
+    node.getIdentifier().accept(*this);
+
+    for (const auto& argument : node.getArguments()) 
+    {
+        argument->accept(*this);
+    }
     level--;
 }
 

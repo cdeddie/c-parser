@@ -19,7 +19,7 @@ public:
     // Expression nodes
     virtual void visit(const BinaryExpressionNode& node) const override;
     virtual void visit(const ExpressionNode& node) const override;
-    virtual void visit(const FunctionCallNode& node) const override;
+    virtual void visit(const FunctionCallExpressionNode& node) const override;
     virtual void visit(const UnaryExpressionNode& node) const override;
     virtual void visit(const VariableReferenceNode& node) const override;
 
@@ -34,6 +34,7 @@ public:
     virtual void visit(const ReturnNode& node) const override;
     virtual void visit(const StatementNode& node) const override;
     virtual void visit(const VariableDefinitionNode& node) const override;
+    virtual void visit(const FunctionCallStatementNode& node) const override;
 
     // Declaration nodes (under Statement)
     virtual void visit(const FunctionDeclarationNode& node) const override;

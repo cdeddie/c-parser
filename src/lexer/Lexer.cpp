@@ -15,6 +15,11 @@ bool Lexer::isAtEnd() const
     return currentChar == EOF;
 }
 
+char Lexer::getCurrentChar() const
+{
+    return currentChar;
+}
+
 // Advances to the next character in the input stream
 // get() does not skip whitespace
 void Lexer::advance() 

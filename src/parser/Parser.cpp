@@ -26,6 +26,7 @@ void Parser::printTokens(int n)
     {
         Token token = peekToken(i);
         std::cout << "Token " << i + 1 << ": " << token.typeToString() << 
+                    " | value: [ " << token.getValue() << " ]" <<
                     " (line " << token.getLine() << ", column " << token.getColumn() << ")\n";
     }
 }
@@ -96,7 +97,6 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
                 {
                     i++;
                 }
-                std::cout << i << "\n";
 
                 if (peekToken(i+1).getType() == TokenType::OpenBracket)
                 {
@@ -145,8 +145,6 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
 
 std::unique_ptr<FunctionDefinitionNode> Parser::parseFunctionDefinition()
 {
-    std::cout << "Parsing function definition\n";
-
     int startLine = currentToken.getLine();
     int startColumn = currentToken.getColumn();
 
@@ -191,7 +189,6 @@ std::unique_ptr<FunctionDeclarationNode> Parser::parseFunctionDeclaration()
 
 std::unique_ptr<TypeNode> Parser::parseType()
 {
-    std::cout << "Parsing type\n";
     if (currentToken.getType() != TokenType::Type)
     {
         throw ParserException("Expected a type", TokenType::Type, currentToken);
@@ -203,7 +200,6 @@ std::unique_ptr<TypeNode> Parser::parseType()
 
 std::unique_ptr<IdentifierNode> Parser::parseIdentifier()
 {
-    std::cout << "Parsing identifier\n";
     if (currentToken.getType() != TokenType::Identifier)
     {
         throw ParserException("Expected an identifier", TokenType::Identifier, currentToken);
@@ -215,7 +211,6 @@ std::unique_ptr<IdentifierNode> Parser::parseIdentifier()
 
 std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 {
-    std::cout << "Parsing parameters\n";
     std::vector<std::unique_ptr<ParameterNode>> parameters;
 
     // Example: (int x, int y)
@@ -282,6 +277,7 @@ std::unique_ptr<BlockNode> Parser::parseBlock()
         auto statement = parseStatement();
         statements.push_back(std::move(statement));
     }
+    std::cout << "Block successfully parsed\n";
 
     expect(TokenType::CloseBracket);
 

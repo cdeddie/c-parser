@@ -2,7 +2,7 @@
 #include "parser/Visitor.hpp"
 
 ExpressionNode::ExpressionNode(int line, int column)
-    : Node(line, column)
+    : StatementNode(line, column)
 {
 }
 

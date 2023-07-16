@@ -7,9 +7,10 @@
 #include "parser/AST/statement/VariableDeclarationNode.hpp"
 #include "parser/AST/statement/VariableDefinitionNode.hpp"
 #include "parser/AST/statement/ReturnNode.hpp"
+#include "parser/AST/statement/FunctionCallStatementNode.hpp"
 
 #include "parser/AST/expression/ExpressionNode.hpp"
-#include "parser/AST/expression/FunctionCallNode.hpp"
+#include "parser/AST/expression/FunctionCallExpressionNode.hpp"
 #include "parser/AST/expression/UnaryExpressionNode.hpp"
 #include "parser/AST/expression/BinaryExpressionNode.hpp"
 #include "parser/AST/expression/VariableReferenceNode.hpp"

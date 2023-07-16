@@ -18,6 +18,22 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
                     return parseVariableDefinition();
                 }
             }
+        case TokenType::Identifier:
+            if (peekToken().getType() == TokenType::OpenParen)
+            {
+                return parseFunctionCallStatement();
+            }
+        case TokenType::Minus:
+        case TokenType::Exclamation:
+        case TokenType::Increment:
+        case TokenType::Decrement:
+        case TokenType::Ampersand:
+        case TokenType::Asterisk:
+            {
+                auto unaryExpression = parseUnaryExpression();
+                expect(TokenType::Semicolon);
+                return unaryExpression;
+            }
         default:
             return nullptr;
     }
@@ -69,4 +85,32 @@ std::unique_ptr<ReturnNode> Parser::parseReturn()
     auto expression = parseExpression();
     expect(TokenType::Semicolon);
     return std::make_unique<ReturnNode>(std::move(expression), startLine, startColumn);
+}
+
+std::unique_ptr<FunctionCallStatementNode> Parser::parseFunctionCallStatement()
+{
+    std::cout << "Function call statement\n";
+    int startLine = currentToken.getLine();
+    int startColumn = currentToken.getColumn();
+
+    std::unique_ptr<IdentifierNode> identifier = parseIdentifier();
+    expect(TokenType::OpenParen);
+    std::vector<std::unique_ptr<ExpressionNode>> args;
+
+    while (currentToken.getType() != TokenType::CloseParen)
+    {
+        args.push_back(parseExpression());
+        if (currentToken.getType() == TokenType::Comma)
+            advance();
+    }
+
+    expect(TokenType::CloseParen);
+    expect(TokenType::Semicolon);
+    
+    return std::make_unique<FunctionCallStatementNode>(
+        std::move(identifier), 
+        std::move(args), 
+        startLine, 
+        startColumn
+    );
 }

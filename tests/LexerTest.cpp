@@ -30,11 +30,11 @@ void handleFile()
 
     Lexer lexer(fileStream);
     Parser parser(lexer);
-    parser.printTokens(10);
+    //parser.printTokens(20);
+    
 
     std::cout << "-------- Parser --------\n";
     // PARSER TEST - NEED TO WRITE OWN FILE OR TEST SUITE
-    std::cout << "Beginning parse...\n";
     std::unique_ptr<AST> AST = parser.parse();
 
     std::cout << "\nParser output: \n";

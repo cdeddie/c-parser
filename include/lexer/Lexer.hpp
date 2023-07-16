@@ -25,6 +25,7 @@ public:
 
     int getCurrentLine() const;
     int getCurrentColumn() const;
+    char getCurrentChar() const;
 
     void printNextTokens(int n);
 

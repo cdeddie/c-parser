@@ -1,6 +1,5 @@
-char function(int x, int y, char c);
-
-int function2(int x, int y)
+int add(int x, int y)
 {
-    return 2;
+    int z = 4 - 3 / 5 + 2;
+    return x + y;
 }
