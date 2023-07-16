@@ -1,5 +1,7 @@
 int add(int x, int y)
 {
-    int z = 4 - 3 / 5 + 2;
-    return x + y;
+    for (int i = 0; i <= 5; i++)
+    {
+        printf("%d\n", i);
+    }
 }

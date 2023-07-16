@@ -4,6 +4,16 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
 {
     switch (currentToken.getType())
     {
+        case TokenType::Identifier:
+            if (peekToken().getType() == TokenType::OpenParen)
+            {
+                return parseFunctionCallStatement();
+            }
+        case TokenType::Keyword:
+            if (currentToken.getValue() == "for")
+            {
+                return parseForStatement();
+            }
         case TokenType::Return:
             return parseReturn();
         case TokenType::Type:
@@ -17,11 +27,6 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
                 {
                     return parseVariableDefinition();
                 }
-            }
-        case TokenType::Identifier:
-            if (peekToken().getType() == TokenType::OpenParen)
-            {
-                return parseFunctionCallStatement();
             }
         case TokenType::Minus:
         case TokenType::Exclamation:
@@ -111,6 +116,48 @@ std::unique_ptr<FunctionCallStatementNode> Parser::parseFunctionCallStatement()
         std::move(identifier), 
         std::move(args), 
         startLine, 
+        startColumn
+    );
+}
+
+std::unique_ptr<ForNode> Parser::parseForStatement()
+{
+    std::cout << "Recognized for statement\n";
+    int startLine = currentToken.getLine();
+    int startColumn = currentToken.getColumn();
+
+    expect(TokenType::Keyword, "for");
+    expect(TokenType::OpenParen);
+
+    auto init = parseStatement();
+
+    auto condition = parseExpression();
+    expect(TokenType::Semicolon);
+
+    auto increment = parseExpression();
+    expect(TokenType::CloseParen);
+
+    std::vector<std::unique_ptr<StatementNode>> body;
+    if (currentToken.getType() == TokenType::OpenBracket)
+    {
+        expect(TokenType::OpenBracket);
+        while (currentToken.getType() != TokenType::CloseBracket)
+        {
+            body.push_back(parseStatement());
+        }
+        expect(TokenType::CloseBracket);
+    }
+    else 
+    {
+        body.push_back(parseStatement());
+    }
+
+    return std::make_unique<ForNode>(
+        std::move(init),
+        std::move(condition),
+        std::move(increment),
+        std::move(body),
+        startLine,
         startColumn
     );
 }

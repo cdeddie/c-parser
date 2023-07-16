@@ -16,12 +16,33 @@ std::unique_ptr<ExpressionNode> Parser::parsePrimaryExpression()
 {
     switch (currentToken.getType())
     {
-        // Case for function call or variable ref
+        case TokenType::OpenParen:
+        {
+            advance();
+            auto expr = parseExpression();
+            expect(TokenType::CloseParen);
+            return expr;
+        }
+
+        // function call or variable ref
         case TokenType::Identifier:
             if (peekToken().getType() == TokenType::OpenParen)
                 return parseFunctionCallExpression();
             else
-                return parseVariableReference();
+            {
+                auto identifier = parseVariableReference();
+
+                // Check for postfix increment/decrement
+                if (currentToken.getType() == TokenType::Increment || currentToken.getType() == TokenType::Decrement)
+                {
+                    UnaryOperatorType op = tokenToUnaryOperatorType(currentToken);
+                    advance();
+                    return std::make_unique<UnaryExpressionNode>(std::move(identifier), op);
+                }
+
+                // It's not a unary expression, so return as a variable reference
+                return identifier;
+            }
 
         // Literal values
         case TokenType::Integer:
@@ -143,6 +164,14 @@ bool Parser::isBinaryOperator(const Token& token)
         case TokenType::Asterisk:
         case TokenType::ForwardSlash:
         case TokenType::Modulus:
+        case TokenType::And:
+        case TokenType::Or:
+        case TokenType::Equals:
+        case TokenType::NotEquals:
+        case TokenType::LessThan: 
+        case TokenType::GreaterThan: 
+        case TokenType::LessThanOrEqual: 
+        case TokenType::GreaterThanOrEqual: 
             return true;
         default:
             return false;
@@ -156,13 +185,25 @@ int Parser::getBinaryOperatorPrecendence(const Token& token)
 
     switch(token.getType())
     {
-        case TokenType::Plus:
-        case TokenType::Minus:
-            return 1;
         case TokenType::Asterisk:
         case TokenType::ForwardSlash:
         case TokenType::Modulus:
+            return 5;
+        case TokenType::Plus:
+        case TokenType::Minus:
+            return 4;
+        case TokenType::LessThan:
+        case TokenType::GreaterThan:
+        case TokenType::LessThanOrEqual:
+        case TokenType::GreaterThanOrEqual:
+            return 3;
+        case TokenType::Equals:
+        case TokenType::NotEquals:
             return 2;
+        case TokenType::And:
+            return 1;
+        case TokenType::Or:
+            return 0;
         default:
             return -1;
     }
@@ -182,12 +223,27 @@ BinaryOperatorType Parser::tokenToBinaryOperatorType(const Token& token)
             return BinaryOperatorType::Divide;
         case TokenType::Modulus:
             return BinaryOperatorType::Modulus;
+        case TokenType::And:
+            return BinaryOperatorType::And;
+        case TokenType::Or: 
+            return BinaryOperatorType::Or;
+        case TokenType::Equals: 
+            return BinaryOperatorType::Equals;
+        case TokenType::NotEquals:
+            return BinaryOperatorType::NotEquals;
+        case TokenType::LessThan:
+            return BinaryOperatorType::LessThan;
+        case TokenType::GreaterThan:
+            return BinaryOperatorType::GreaterThan;
+        case TokenType::LessThanOrEqual:
+            return BinaryOperatorType::LessThanOrEqual;
+        case TokenType::GreaterThanOrEqual:
+            return BinaryOperatorType::GreaterThanOrEqual;
         default:
             throw std::runtime_error("Unexpected token type for binary operator");
     }
 }
 
-// TODO: Requires precedence parsing
 std::unique_ptr<ExpressionNode> Parser::parseBinaryExpression(int exprPrec, std::unique_ptr<ExpressionNode> left)
 {
     while (true)

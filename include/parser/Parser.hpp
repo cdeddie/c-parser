@@ -68,6 +68,7 @@ public:
     std::unique_ptr<StatementNode> parseStatement();
     std::unique_ptr<ReturnNode> parseReturn();
     std::unique_ptr<FunctionCallStatementNode> parseFunctionCallStatement();
+    std::unique_ptr<ForNode> parseForStatement();
     
     std::unique_ptr<VariableDefinitionNode> parseVariableDefinition();
     std::unique_ptr<VariableDeclarationNode> parseVariableDeclaration();
@@ -75,6 +76,6 @@ public:
     /*
     std::unique_ptr<IfNode> parseIf();
     std::unique_ptr<WhileNode> parseWhile();
-    std::unique_ptr<ReturnNode> parseReturn();
+    std::unique_ptr<ForNode> parseFor();
     */
 };

@@ -226,6 +226,22 @@ void PrintVisitor::visit(const FunctionCallStatementNode& node) const
     level--;
 }
 
+void PrintVisitor::visit(const ForNode& node) const
+{
+    printIndent();
+    std::cout << "ForNode: " << std::endl;
+    level++;
+    node.getInit().accept(*this);
+    node.getCondition().accept(*this);
+    node.getIncrement().accept(*this);
+
+    for (const auto& statement : node.getBody()) 
+    {
+        statement->accept(*this);
+    }
+    level--;
+}
+
 void PrintVisitor::printIndent() const
 {
     for (int i = 0; i < level - 1; i++) 
