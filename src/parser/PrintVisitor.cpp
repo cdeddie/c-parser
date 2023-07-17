@@ -242,6 +242,51 @@ void PrintVisitor::visit(const ForNode& node) const
     level--;
 }
 
+void PrintVisitor::visit(const IfNode& node) const
+{
+    printIndent();
+    std::cout << "IfNode: " << std::endl;
+    level++;
+
+    printIndent();
+    std::cout << "| Condition: |" << std::endl;
+    node.getCondition().accept(*this);
+
+    printIndent();
+    std::cout << "| ThenBlock: |" << std::endl;
+    node.getThenBlock().accept(*this);
+
+    const auto& elseIfBlocks = node.getElseIfBlocks();
+    for (const auto& elseIf : elseIfBlocks)
+    {
+        printIndent();
+        std::cout << "| ElseIfNode: |" << std::endl;
+        level++;
+
+        printIndent();
+        std::cout << "| Condition: |" << std::endl;
+        level++;
+        elseIf.first->accept(*this);
+        level--;
+
+        printIndent();
+        std::cout << "| Block: |" << std::endl;
+        level++;
+        elseIf.second->accept(*this);
+        level--;
+    }
+
+    const auto& elseBlock = node.getElseBlock();
+    if (elseBlock)
+    {
+        printIndent();
+        std::cout << "| ElseBlock: |" << std::endl;
+        level++;
+        elseBlock->accept(*this);
+        level--;
+    }
+}
+
 void PrintVisitor::printIndent() const
 {
     for (int i = 0; i < level - 1; i++) 

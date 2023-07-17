@@ -14,6 +14,10 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
             {
                 return parseForStatement();
             }
+            else if (currentToken.getValue() == "if")
+            {
+                return parseIfStatement();
+            }
         case TokenType::Return:
             return parseReturn();
         case TokenType::Type:
@@ -159,5 +163,77 @@ std::unique_ptr<ForNode> Parser::parseForStatement()
         std::move(body),
         startLine,
         startColumn
+    );
+}
+
+std::unique_ptr<IfNode> Parser::parseIfStatement()
+{
+    int startLine = currentToken.getLine();
+    int startColumn = currentToken.getColumn();
+    expect(TokenType::Keyword, "if");
+    expect(TokenType::OpenParen);
+    auto condition = parseExpression();
+    expect(TokenType::CloseParen);
+
+    std::unique_ptr<BlockNode> thenBlock = nullptr;
+    std::vector<IfNode::ElseIfNode> elseIfBlocks;
+    std::unique_ptr<BlockNode> elseBlock = nullptr;
+
+    if (currentToken.getType() == TokenType::OpenBracket)
+    {
+        thenBlock = parseBlock();
+    }
+    // Handles single statement if blocks such as "if (true) return 0;"
+    else
+    {
+        std::vector<std::unique_ptr<StatementNode>> singleStatement;
+        singleStatement.push_back(parseStatement());
+        thenBlock = std::make_unique<BlockNode>(std::move(singleStatement));
+    }
+
+    while (currentToken.getType() == TokenType::Keyword && currentToken.getValue() == "else")
+    {
+        advance();
+        if (currentToken.getType() == TokenType::Keyword && currentToken.getValue() == "if")
+        {
+            advance();
+            expect(TokenType::OpenParen);
+            auto elseIfCondition = parseExpression();
+            expect(TokenType::CloseParen);
+
+            std::unique_ptr<BlockNode> elseIfBlock = nullptr;
+
+            if (currentToken.getType() == TokenType::OpenBracket)
+            {
+                elseIfBlock = parseBlock();
+            }
+            else
+            {
+                std::vector<std::unique_ptr<StatementNode>> singleStatement;
+                singleStatement.push_back(parseStatement());
+                elseIfBlock = std::make_unique<BlockNode>(std::move(singleStatement));
+            }
+            elseIfBlocks.push_back(std::make_pair(std::move(elseIfCondition), std::move(elseIfBlock)));
+        }
+        else 
+        {
+            if (currentToken.getType() == TokenType::OpenBracket)
+            {
+                elseBlock = parseBlock();
+            }
+            else 
+            {
+                std::vector<std::unique_ptr<StatementNode>> singleStatement;
+                singleStatement.push_back(parseStatement());
+                elseBlock = std::make_unique<BlockNode>(std::move(singleStatement));
+            }
+        }
+    }
+
+    return std::make_unique<IfNode>(
+        std::move(condition),
+        std::move(thenBlock),
+        std::move(elseIfBlocks),
+        std::move(elseBlock)
     );
 }
