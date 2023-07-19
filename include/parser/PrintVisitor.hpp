@@ -37,6 +37,7 @@ public:
     virtual void visit(const FunctionCallStatementNode& node) const override;
     virtual void visit(const ForNode& node) const override;
     virtual void visit(const IfNode& node) const override;
+    virtual void visit(const WhileNode& node) const override;
 
     // Declaration nodes (under Statement)
     virtual void visit(const FunctionDeclarationNode& node) const override;

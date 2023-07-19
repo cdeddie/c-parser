@@ -264,7 +264,6 @@ std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 
 std::unique_ptr<BlockNode> Parser::parseBlock()
 {
-    std::cout << "Parsing block\n";
     int startLine = currentToken.getLine();
     int startColumn = currentToken.getColumn();
 
@@ -277,7 +276,6 @@ std::unique_ptr<BlockNode> Parser::parseBlock()
         auto statement = parseStatement();
         statements.push_back(std::move(statement));
     }
-    std::cout << "Block successfully parsed\n";
 
     expect(TokenType::CloseBracket);
 

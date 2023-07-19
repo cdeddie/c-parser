@@ -14,16 +14,16 @@ enum class TokenType
 {
     Identifier, Keyword, Return, Type, Symbol,
     Integer, Float, StringLiteral, CharLiteral,
-    Assignment, Whitespace, Comment, Semicolon,
-    OpenParen, CloseParen, OpenBracket, CloseBracket,
-    EndOfFile, Error, Comma,
-    Plus, Minus, Asterisk, Modulus, ForwardSlash,
-    Increment, Decrement,
-    Ampersand, Exclamation,
-    Negation, And, Or,
-    Equals, NotEquals, LessThan, GreaterThan,
-    LessThanOrEqual, GreaterThanOrEqual,
-    PreprocessorDirective,
+    Assignment, Comment, Semicolon,                     // =, //, ;
+    OpenParen, CloseParen, OpenBracket, CloseBracket,   // (, ), [, ]
+    EndOfFile, Error, Comma,                            // -1, error, ,
+    Plus, Minus, Asterisk, Modulus, ForwardSlash,       // +, -, *, %, /
+    Increment, Decrement,                               // ++, --
+    Ampersand, Exclamation,                             // &, !
+    Negation, And, Or,                                  // !=, &&, ||
+    Equals, NotEquals, LessThan, GreaterThan,           // ==, !=, <, >
+    LessThanOrEqual, GreaterThanOrEqual,                // <=, >=
+    PreprocessorDirective,                              // #
 };
 
 class Token 

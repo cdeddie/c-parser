@@ -287,6 +287,16 @@ void PrintVisitor::visit(const IfNode& node) const
     }
 }
 
+void PrintVisitor::visit(const WhileNode& node) const
+{
+    printIndent();
+    std::cout << "WhileNode: " << std::endl;
+    level++;
+    node.getCondition().accept(*this);
+    node.getBody().accept(*this);
+    level--;
+}
+
 void PrintVisitor::printIndent() const
 {
     for (int i = 0; i < level - 1; i++) 

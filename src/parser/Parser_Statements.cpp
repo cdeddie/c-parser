@@ -11,13 +11,11 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
             }
         case TokenType::Keyword:
             if (currentToken.getValue() == "for")
-            {
                 return parseForStatement();
-            }
             else if (currentToken.getValue() == "if")
-            {
                 return parseIfStatement();
-            }
+            else if (currentToken.getValue() == "while")
+                return parseWhileStatement();
         case TokenType::Return:
             return parseReturn();
         case TokenType::Type:
@@ -98,7 +96,6 @@ std::unique_ptr<ReturnNode> Parser::parseReturn()
 
 std::unique_ptr<FunctionCallStatementNode> Parser::parseFunctionCallStatement()
 {
-    std::cout << "Function call statement\n";
     int startLine = currentToken.getLine();
     int startColumn = currentToken.getColumn();
 
@@ -235,5 +232,35 @@ std::unique_ptr<IfNode> Parser::parseIfStatement()
         std::move(thenBlock),
         std::move(elseIfBlocks),
         std::move(elseBlock)
+    );
+}
+
+std::unique_ptr<WhileNode> Parser::parseWhileStatement()
+{
+    int startLine = currentToken.getLine();
+    int startColumn = currentToken.getColumn();
+
+    expect(TokenType::Keyword, "while");
+    expect(TokenType::OpenParen);
+    auto condition = parseExpression();
+    expect(TokenType::CloseParen);
+
+    std::unique_ptr<BlockNode> body = nullptr;
+    if (currentToken.getType() == TokenType::OpenBracket)
+    {
+        body = parseBlock();
+    }
+    else 
+    {
+        std::vector<std::unique_ptr<StatementNode>> singleStatement;
+        singleStatement.push_back(parseStatement());
+        body = std::make_unique<BlockNode>(std::move(singleStatement));
+    }
+
+    return std::make_unique<WhileNode>(
+        std::move(condition),
+        std::move(body),
+        startLine,
+        startColumn
     );
 }

@@ -10,6 +10,7 @@
 #include "parser/AST/statement/FunctionCallStatementNode.hpp"
 #include "parser/AST/statement/ForNode.hpp"
 #include "parser/AST/statement/IfNode.hpp"
+#include "parser/AST/statement/WhileNode.hpp"
 
 #include "parser/AST/expression/ExpressionNode.hpp"
 #include "parser/AST/expression/FunctionCallExpressionNode.hpp"

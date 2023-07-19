@@ -99,6 +99,15 @@ void Lexer::enqueueToken()
     tokenQueue.push_back(Token(TokenType::EndOfFile, "", currentLine, currentColumn));
 }
 
+void Lexer::printAllTokens()
+{
+    while (!isAtEnd())
+    {
+        Token token = nextToken();
+        std::cout << "Token: " << token.typeToString() << 
+                    " (line " << token.getLine() << ", column " << token.getColumn() << ")\n";
+    }
+}
 
 void Lexer::printNextTokens(int n)
 {

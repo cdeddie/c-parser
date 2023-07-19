@@ -28,6 +28,7 @@ public:
     char getCurrentChar() const;
 
     void printNextTokens(int n);
+    void printAllTokens();
 
 private:
     std::istream& input;

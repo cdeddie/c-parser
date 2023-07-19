@@ -40,7 +40,7 @@ public:
     virtual void visit(const FunctionCallStatementNode& node) const = 0;
     virtual void visit(const IfNode& node) const = 0;
     virtual void visit(const ForNode& node) const = 0;
-    //virtual void visit(const WhileNode& node) const = 0;
+    virtual void visit(const WhileNode& node) const = 0;
 
     // Declaration nodes (under Statement)
     virtual void visit(const FunctionDeclarationNode& node) const = 0;

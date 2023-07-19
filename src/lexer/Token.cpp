@@ -59,7 +59,6 @@ const std::map<TokenType, std::string> Token::tokenTypeStrings = {
     { TokenType::StringLiteral, "StringLiteral" },
     { TokenType::CharLiteral, "CharLiteral" },
     { TokenType::Assignment, "Assignment" },
-    { TokenType::Whitespace, "Whitespace" },
     { TokenType::Comment, "Comment" },
     { TokenType::EndOfFile, "EndOfFile" },
     { TokenType::Error, "Error" },
