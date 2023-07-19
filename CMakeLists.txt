@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.1)
 project(c-compiler)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_C_COMPILER "C:/msys64/ucrt64/bin/gcc.exe")
-set(CMAKE_CXX_COMPILER "C:/msys64/ucrt64/bin/g++.exe")
 
 # Add main source files
 file(GLOB_RECURSE MAIN_SRC_LIST CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.cpp")
