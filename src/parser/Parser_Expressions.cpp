@@ -100,6 +100,7 @@ Parser::UnaryOperatorNodeType Parser::getUnaryOperatorNodeType(const Token& toke
         case TokenType::Exclamation:
         case TokenType::Minus:
         case TokenType::Ampersand:
+        case TokenType::Asterisk:
             return UnaryOperatorNodeType::Prefix;
         case TokenType::Identifier:
             if (peekToken().getType() == TokenType::Increment || peekToken().getType() == TokenType::Decrement)
@@ -123,6 +124,10 @@ UnaryOperatorType Parser::tokenToUnaryOperatorType(const Token& token) {
         return UnaryOperatorType::Not;
     else if (tokenValue == "-")
         return UnaryOperatorType::Negate;
+    else if (tokenValue == "*")
+        return UnaryOperatorType::Dereference;
+    else if (tokenValue == "&")
+        return UnaryOperatorType::AddressOf;
     else
         throw std::runtime_error("Unexpected token value for UnaryOperatorNode operator: " + tokenValue);
 

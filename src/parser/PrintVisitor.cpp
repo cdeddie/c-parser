@@ -75,6 +75,11 @@ void PrintVisitor::visit(const TypeNode& node) const
 {
     printIndent();
     std::cout << "TypeNode: " << node.getType() << std::endl;
+    if (node.getPointerLevel() > 0)
+    {
+        printIndent();
+        std::cout << "PointerLevel: " << node.getPointerLevel() << std::endl;
+    }
 }
 
 void PrintVisitor::visit(const BinaryExpressionNode& node) const

@@ -32,7 +32,7 @@ private:
     Environment env; // Probably not needed
 
 // Parse methods for each node
-public:
+private:
     std::unique_ptr<ProgramNode> parseProgram();
     std::unique_ptr<TypeNode> parseType();
     std::unique_ptr<IdentifierNode> parseIdentifier();

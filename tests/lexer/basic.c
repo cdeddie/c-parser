@@ -1,4 +1,7 @@
-int main()
-{
-    return 0;
+#include <stdio.h>
+
+int main() {
+    int x = 5;
+    int* y = &x;
+    int** z = &y;
 }

@@ -33,6 +33,10 @@ const std::string UnaryExpressionNode::getUnaryOperatorString() const
             return "++";
         case UnaryOperatorType::Decrement:
             return "--";
+        case UnaryOperatorType::AddressOf:
+            return "&";
+        case UnaryOperatorType::Dereference:
+            return "* (dereference)";
         default:
             return "";
     }

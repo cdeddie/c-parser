@@ -193,9 +193,21 @@ std::unique_ptr<TypeNode> Parser::parseType()
     {
         throw ParserException("Expected a type", TokenType::Type, currentToken);
     }
-    auto typeNode = std::make_unique<TypeNode>(currentToken.getValue(), currentToken.getLine(), currentToken.getColumn());
+
+    std::string typeName = currentToken.getValue();
+    int line = currentToken.getLine();
+    int column = currentToken.getColumn();
+
     advance();
-    return typeNode;
+
+    int pointerLevel = 0;
+    while (currentToken.getType() == TokenType::Asterisk)
+    {
+        pointerLevel++;
+        advance();
+    }
+
+    return std::make_unique<TypeNode>(typeName, pointerLevel, line, column);
 }
 
 std::unique_ptr<IdentifierNode> Parser::parseIdentifier()

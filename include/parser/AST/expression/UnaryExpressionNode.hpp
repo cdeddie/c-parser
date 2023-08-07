@@ -12,7 +12,9 @@ enum class UnaryOperatorType
     Negate,     // -1
     Not,        // !true
     Increment,  // ++i
-    Decrement   // --i
+    Decrement,   // --i
+    Dereference, // *ptr
+    AddressOf,   // &i
 };
 
 class UnaryExpressionNode : public ExpressionNode

@@ -34,6 +34,15 @@ protected:
             auto ast = parser.parse();
             ast->printTree(visitor);
         });
+
+        runTest("Pointer test" , [&]() {
+            std::stringstream input = loadTestFile("/parser/pointer.c");
+            Lexer lexer(input);
+            Parser parser(lexer);
+            PrintVisitor visitor;
+            auto ast = parser.parse();
+            ast->printTree(visitor);
+        });
     }
 };
 

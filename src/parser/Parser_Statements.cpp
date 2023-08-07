@@ -18,16 +18,38 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
                 return parseWhileStatement();
         case TokenType::Return:
             return parseReturn();
+        // Pointer handling (ignore asterisks)
         case TokenType::Type:
-            if (peekToken().getType() == TokenType::Identifier)
             {
-                if (peekToken(2).getType() == TokenType::Semicolon)
+                int peekOffset = 1;
+
+                while(peekToken(peekOffset).getType() == TokenType::Asterisk)
+                {
+                    peekOffset++;
+                }
+
+                if (peekToken(peekOffset).getType() != TokenType::Identifier)
+                {
+                    throw ParserException("Expected identifier after type in variable declaration/definition", 
+                        TokenType::Identifier, peekToken(peekOffset));
+                }
+
+                peekOffset++;
+
+                
+                if (peekToken(peekOffset).getType() == TokenType::Semicolon)
                 {
                     return parseVariableDeclaration();
                 }
-                else if (peekToken(2).getType() == TokenType::Assignment)
+                else if (peekToken(peekOffset).getType() == TokenType::Assignment)
                 {
                     return parseVariableDefinition();
+                }
+                else
+                {
+                    throw ParserException("Expected ';' or '=' after variable identifier", 
+                        TokenType::Semicolon, peekToken(peekOffset));  
+
                 }
             }
         case TokenType::Minus:
