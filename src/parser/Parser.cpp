@@ -227,11 +227,24 @@ std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 
     // Example: (int x, int y)
     expect(TokenType::OpenParen);
-    
 
-    if (peekToken().getType() == TokenType::CloseParen)
+    // Special case: void parameter -> int main(void)
+    if (currentToken.getType() == TokenType::Type && currentToken.getValue() == "void")
     {
-        std::cout << "No parameters\n";
+        advance();
+        if (currentToken.getType() != TokenType::CloseParen)
+        {
+            throw ParserException("Unexpected token after 'void' in parameter list", TokenType::CloseParen, currentToken);
+        }
+
+        // Consumes closing paren
+        advance();
+        return parameters; 
+    }
+
+    // No parameters case
+    if (currentToken.getType() == TokenType::CloseParen)
+    {
         advance();
         return parameters;
     }
@@ -243,14 +256,6 @@ std::vector<std::unique_ptr<ParameterNode>> Parser::parseParameters()
 
         auto typeNode = parseType();
         auto identifierNode = parseIdentifier();
-
-        // void parameter in c, i.e. int main(void)
-        if (currentToken.getType() == TokenType::Type && currentToken.getValue() == "void")
-        {
-            advance();
-            expect(TokenType::CloseParen);
-            return parameters;
-        }
 
         // Emplace constructs the object
         parameters.emplace_back(std::make_unique<ParameterNode>(
