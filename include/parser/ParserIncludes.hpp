@@ -6,6 +6,7 @@
 #include "parser/AST/statement/FunctionDeclarationNode.hpp"
 #include "parser/AST/statement/VariableDeclarationNode.hpp"
 #include "parser/AST/statement/VariableDefinitionNode.hpp"
+#include "parser/AST/statement/AssignmentStatementNode.hpp"
 #include "parser/AST/statement/ReturnNode.hpp"
 #include "parser/AST/statement/FunctionCallStatementNode.hpp"
 #include "parser/AST/statement/ForNode.hpp"
@@ -23,3 +24,6 @@
 #include "parser/AST/expression/literal/FloatLiteralNode.hpp"
 #include "parser/AST/expression/literal/StringLiteralNode.hpp"
 #include "parser/AST/expression/literal/CharLiteralNode.hpp"
+
+#include "parser/AST/ArraySpecifierNode.hpp"
+#include "parser/AST/expression/ArrayInitializerNode.hpp"

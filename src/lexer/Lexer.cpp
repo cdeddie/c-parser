@@ -304,6 +304,12 @@ Token Lexer::symbol()
     case '}':
         tokenType = TokenType::CloseBracket;
         break;
+    case '[':
+        tokenType = TokenType::OpenSquare;
+        break;
+    case ']':
+        tokenType = TokenType::CloseSquare;
+        break;
     case ';':
         tokenType = TokenType::Semicolon;
         break;

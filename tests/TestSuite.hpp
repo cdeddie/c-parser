@@ -13,7 +13,7 @@ public:
     void run()
     {
         runTests();
-        std::cout << "\033[32m" << "All tests passed" << "\033[0m" << std::endl;
+        std::cout << "\033[32m" << "Testing complete" << "\033[0m" << std::endl;
     }
 
 protected:
@@ -21,7 +21,8 @@ protected:
 
     void runTest(const std::string& description, const std::function<void()>& test)
     {
-        std::cout << "\033[1m" << "----- Testing: " << description << " -----" << "\033[0m" << std::endl;
+        std::cout << std::endl;
+        std::cout << "\033[33m" << "----- Testing: " << description << " -----" << "\033[0m" << std::endl;
         try
         {
             test();

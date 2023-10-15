@@ -107,7 +107,6 @@ void PrintVisitor::visit(const FunctionCallExpressionNode& node) const
     std::cout << "FunctionCallExpressionNode: " << std::endl;
     level++;
     node.getIdentifier().accept(*this);
-
     for (const auto& argument : node.getArguments()) 
     {
         argument->accept(*this);
@@ -132,6 +131,16 @@ void PrintVisitor::visit(const VariableReferenceNode& node) const
     std::cout << "VariableReferenceNode: " << std::endl;
     level++;
     node.getIdentifier().accept(*this);
+    const auto& indices = node.getIndices();
+    if (!indices.empty())
+    {
+        printIndent();
+        std::cout << "Indices: " << std::endl;
+        level++;
+        for (const auto& index : indices)
+            index->accept(*this);
+        level--;
+    }
     level--;
 }
 
@@ -196,6 +205,23 @@ void PrintVisitor::visit(const FunctionDeclarationNode& node) const
 
 }
 
+void PrintVisitor::visit(const AssignmentStatementNode& node) const
+{
+    printIndent();
+    std::cout << "AssignmentStatementNode: " << std::endl;
+    level++;
+
+    if (node.getDereferenceLevel() > 0)
+    {
+        printIndent();
+        std::cout << "Dereference level: " << node.getDereferenceLevel() << std::endl;
+    }
+
+    node.getVarRef().accept(*this);
+    node.getValue().accept(*this);
+    level--;
+}
+
 void PrintVisitor::visit(const VariableDeclarationNode& node) const
 {
     printIndent();
@@ -203,6 +229,16 @@ void PrintVisitor::visit(const VariableDeclarationNode& node) const
     level++;
     node.getType().accept(*this);
     node.getIdentifier().accept(*this);
+    const auto& arraySpecifiers = node.getArraySpecifiers();
+    if (!arraySpecifiers.empty())
+    {
+        printIndent();
+        std::cout << "Array Specifiers: " << std::endl;
+        level++;
+        for (const auto& specifier : arraySpecifiers)
+            specifier->accept(*this);
+        level--;
+    }
     level--;
 }
 
@@ -213,6 +249,17 @@ void PrintVisitor::visit(const VariableDefinitionNode& node) const
     level++;
     node.getType().accept(*this);
     node.getIdentifier().accept(*this);
+
+    // Check for array
+    if (!node.getArraySpecifiers().empty())
+    {
+        printIndent();
+        std::cout << "Array specifiers: " << std::endl;
+        level++;
+        for (const auto& specifier : node.getArraySpecifiers())
+            specifier->accept(*this);
+        level--;
+    }
     node.getInit().accept(*this);
     level--;
 }
@@ -299,6 +346,29 @@ void PrintVisitor::visit(const WhileNode& node) const
     level++;
     node.getCondition().accept(*this);
     node.getBody().accept(*this);
+    level--;
+}
+
+void PrintVisitor::visit(const ArraySpecifierNode& node) const
+{
+    printIndent();
+    std::cout << "ArraySpecifierNode:" << std::endl;
+    level++;
+    if (node.hasSize())
+        node.getSize().accept(*this);
+    else
+        std::cout << "unspecified size";
+    level--;
+    
+}
+
+void PrintVisitor::visit(const ArrayInitializerNode& node) const
+{
+    printIndent();
+    std::cout << "ArrayInitializerNode:" << std::endl;
+    level++;
+    for (const auto& element : node.getElements())
+        element->accept(*this);
     level--;
 }
 

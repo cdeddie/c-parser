@@ -5,67 +5,129 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
     switch (currentToken.getType())
     {
         case TokenType::Identifier:
+        {
             if (peekToken().getType() == TokenType::OpenParen)
             {
                 return parseFunctionCallStatement();
             }
+            else if (peekToken().getType() == TokenType::Assignment)
+            {
+                return parseAssignmentStatement();
+            }
+            else if (peekToken().getType() == TokenType::Increment || peekToken().getType() == TokenType::Decrement)
+            {
+                auto identifier = parseVariableReference();
+                UnaryOperatorType op = tokenToUnaryOperatorType(currentToken);
+                advance();
+                expect(TokenType::Semicolon);
+                return std::make_unique<UnaryExpressionNode>(std::move(identifier), op);
+            }
+            else
+            {
+                throw ParserException("Current token is indentifier, but expected function call, assignment, or unary expression", 
+                    TokenType::OpenParen, peekToken());
+            }
+        }
+
         case TokenType::Keyword:
+        {
             if (currentToken.getValue() == "for")
                 return parseForStatement();
             else if (currentToken.getValue() == "if")
                 return parseIfStatement();
             else if (currentToken.getValue() == "while")
                 return parseWhileStatement();
+
+            break;
+        }
+        
         case TokenType::Return:
+        {
             return parseReturn();
+        }
+        
         // Pointer handling (ignore asterisks)
         case TokenType::Type:
-            {
-                int peekOffset = 1;
+        {
+            int peekOffset = 1;
 
-                while(peekToken(peekOffset).getType() == TokenType::Asterisk)
+            while(peekToken(peekOffset).getType() == TokenType::Asterisk)
+            {
+                peekOffset++;
+            }
+
+            if (peekToken(peekOffset).getType() != TokenType::Identifier)
+            {
+                throw ParserException("Expected identifier after type in variable declaration/definition", 
+                    TokenType::Identifier, peekToken(peekOffset));
+            }
+
+            peekOffset++;
+
+            // Account for arrays
+            while (peekToken(peekOffset).getType() == TokenType::OpenSquare)
+            {
+                // Increment the offset to skip over the contents of the array specifier
+                do 
                 {
                     peekOffset++;
-                }
-
-                if (peekToken(peekOffset).getType() != TokenType::Identifier)
-                {
-                    throw ParserException("Expected identifier after type in variable declaration/definition", 
-                        TokenType::Identifier, peekToken(peekOffset));
-                }
+                } 
+                while (peekToken(peekOffset).getType() != TokenType::CloseSquare);
 
                 peekOffset++;
-
-                
-                if (peekToken(peekOffset).getType() == TokenType::Semicolon)
-                {
-                    return parseVariableDeclaration();
-                }
-                else if (peekToken(peekOffset).getType() == TokenType::Assignment)
-                {
-                    return parseVariableDefinition();
-                }
-                else
-                {
-                    throw ParserException("Expected ';' or '=' after variable identifier", 
-                        TokenType::Semicolon, peekToken(peekOffset));  
-
-                }
             }
+
+            if (peekToken(peekOffset).getType() == TokenType::Semicolon)
+            {
+                return parseVariableDeclaration();
+            }
+            else if (peekToken(peekOffset).getType() == TokenType::Assignment)
+            {
+                return parseVariableDefinition();
+            }
+            else
+            {
+                throw ParserException("Expected ';' or '=' after variable identifier", 
+                    TokenType::Semicolon, peekToken(peekOffset));  
+            }
+        }
+
+        case TokenType::Asterisk:
+        {
+            return handleAsteriskToken();
+        }
+
         case TokenType::Minus:
         case TokenType::Exclamation:
         case TokenType::Increment:
         case TokenType::Decrement:
         case TokenType::Ampersand:
-        case TokenType::Asterisk:
-            {
-                auto unaryExpression = parseUnaryExpression();
-                expect(TokenType::Semicolon);
-                return unaryExpression;
-            }
+        {
+            auto unaryExpression = parseUnaryExpression();
+            expect(TokenType::Semicolon);
+            return unaryExpression;
+        }
+        
         default:
             return nullptr;
     }
+}
+
+std::unique_ptr<ArraySpecifierNode> Parser::parseArraySpecifier()
+{
+    expect(TokenType::OpenSquare);
+    std::unique_ptr<ExpressionNode> sizeNode = nullptr;
+
+    // TODO: In this parser, arrays can only be declared with a size
+    // So - include error handling in this if statement
+    if (currentToken.getType() != TokenType::CloseSquare)
+    {
+        sizeNode = parseExpression();
+    }
+
+    expect(TokenType::CloseSquare);
+    
+    return std::make_unique<ArraySpecifierNode>(std::move(sizeNode));
 }
 
 std::unique_ptr<VariableDeclarationNode> Parser::parseVariableDeclaration()
@@ -75,11 +137,19 @@ std::unique_ptr<VariableDeclarationNode> Parser::parseVariableDeclaration()
 
     auto typeNode = parseType();
     auto identifierNode = parseIdentifier();
+
+    std::vector<std::unique_ptr<ArraySpecifierNode>> arraySpecifiers;
+    while (currentToken.getType() == TokenType::OpenSquare)
+    {
+        arraySpecifiers.push_back(parseArraySpecifier());
+    }
+
     expect(TokenType::Semicolon);
 
     return std::make_unique<VariableDeclarationNode>(
         std::move(typeNode),
         std::move(identifierNode),
+        std::move(arraySpecifiers),
         startLine,
         startColumn
     );
@@ -92,17 +162,99 @@ std::unique_ptr<VariableDefinitionNode> Parser::parseVariableDefinition()
 
     auto typeNode = parseType();
     auto identifierNode = parseIdentifier();
+
+    std::vector<std::unique_ptr<ArraySpecifierNode>> arraySpecifiers;
+    while (currentToken.getType() == TokenType::OpenSquare)
+    {
+        arraySpecifiers.push_back(parseArraySpecifier());
+    }
+
     expect(TokenType::Assignment);
-    auto expression = parseExpression();
+    
+    std::unique_ptr<Node> initializer;  // This can be an ArrayInitializerNode or an ExpressionNode
+    if (currentToken.getType() == TokenType::OpenBracket)
+    {
+        initializer = parseArrayInitializer();
+    }
+    else
+    {
+        initializer = parseExpression();
+    }
+    
     expect(TokenType::Semicolon);
 
     return std::make_unique<VariableDefinitionNode>(
         std::move(typeNode),
         std::move(identifierNode),
-        std::move(expression),
+        std::move(initializer),
+        std::move(arraySpecifiers),
         startLine,
         startColumn
     );
+}
+
+std::unique_ptr<AssignmentStatementNode> Parser::parseAssignmentStatement()
+{
+    int startLine = currentToken.getLine();
+    int startColumn = currentToken.getColumn();
+
+    auto varRef = parseVariableReference();
+    expect(TokenType::Assignment);
+    auto value = parseExpression();
+    expect(TokenType::Semicolon);
+
+    return std::make_unique<AssignmentStatementNode>(
+        std::move(varRef),
+        std::move(value),
+        startLine,
+        startColumn
+    );
+}
+
+std::unique_ptr<StatementNode> Parser::handleAsteriskToken()
+{
+    int peekOffset = 1;
+    while (peekToken(peekOffset).getType() == TokenType::Asterisk)
+    {
+        peekOffset++;
+    }
+
+    if (peekToken(peekOffset).getType() == TokenType::Identifier 
+        && peekToken(peekOffset + 1).getType() == TokenType::Assignment)
+    {
+        return parseDereferenceAssignment();
+    }
+    else
+    {
+        auto unaryExpression = parseUnaryExpression();
+        expect(TokenType::Semicolon);
+        return unaryExpression;
+    }
+}
+
+std::unique_ptr<AssignmentStatementNode> Parser::parseDereferenceAssignment()
+{
+    int dereferenceCount = 0;
+    while (currentToken.getType() == TokenType::Asterisk)
+    {
+        dereferenceCount++;
+        advance();
+    }
+
+    auto varRef = parseVariableReference();
+    expect(TokenType::Assignment);
+    auto value = parseExpression();
+    expect(TokenType::Semicolon);
+
+    auto assignmentNode = std::make_unique<AssignmentStatementNode>(
+        std::move(varRef),
+        std::move(value),
+        dereferenceCount,
+        currentToken.getLine(),
+        currentToken.getColumn()
+    );
+
+    return assignmentNode;
 }
 
 std::unique_ptr<ReturnNode> Parser::parseReturn()

@@ -1,0 +1,4 @@
+int pointer()
+{
+    return &x;
+}
