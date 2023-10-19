@@ -34,6 +34,7 @@ public:
     virtual void visit(const ReturnNode& node) const override;
     virtual void visit(const StatementNode& node) const override;
     virtual void visit(const VariableDefinitionNode& node) const override;
+    virtual void visit(const AssignmentStatementNode& node) const override;
     virtual void visit(const FunctionCallStatementNode& node) const override;
     virtual void visit(const ForNode& node) const override;
     virtual void visit(const IfNode& node) const override;
@@ -42,6 +43,9 @@ public:
     // Declaration nodes (under Statement)
     virtual void visit(const FunctionDeclarationNode& node) const override;
     virtual void visit(const VariableDeclarationNode& node) const override;
+
+    virtual void visit(const ArraySpecifierNode& node) const override;
+    virtual void visit(const ArrayInitializerNode& node) const override;
 private:
     mutable int level;
 

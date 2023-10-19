@@ -17,6 +17,7 @@ class Parser
 public:
     explicit Parser(Lexer& lexer);
     std::unique_ptr<AST> parse();
+    std::unique_ptr<AST> parseTest();
 
     void printTokens(int n);
 
@@ -74,5 +75,10 @@ private:
     
     std::unique_ptr<VariableDefinitionNode> parseVariableDefinition();
     std::unique_ptr<VariableDeclarationNode> parseVariableDeclaration();
+    std::unique_ptr<AssignmentStatementNode> parseAssignmentStatement();
+    std::unique_ptr<AssignmentStatementNode> parseDereferenceAssignment();
+    std::unique_ptr<StatementNode> handleAsteriskToken(); // helper function for multiple dereference assignment statement
+    std::unique_ptr<ArraySpecifierNode> parseArraySpecifier();
+    std::unique_ptr<ArrayInitializerNode> parseArrayInitializer();
 
 };

@@ -15,7 +15,8 @@ enum class TokenType
     Identifier, Keyword, Return, Type, Symbol,
     Integer, Float, StringLiteral, CharLiteral,
     Assignment, Comment, Semicolon,                     // =, //, ;
-    OpenParen, CloseParen, OpenBracket, CloseBracket,   // (, ), [, ]
+    OpenParen, CloseParen, OpenBracket, CloseBracket,   // (, ), {, }
+    OpenSquare, CloseSquare,                            // [, ]
     EndOfFile, Error, Comma,                            // -1, error, ,
     Plus, Minus, Asterisk, Modulus, ForwardSlash,       // +, -, *, %, /
     Increment, Decrement,                               // ++, --

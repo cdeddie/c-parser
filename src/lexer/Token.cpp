@@ -67,6 +67,8 @@ const std::map<TokenType, std::string> Token::tokenTypeStrings = {
     { TokenType::CloseParen, "CloseParen" },
     { TokenType::OpenBracket, "OpenBracket" },
     { TokenType::CloseBracket, "CloseBracket" },
+    { TokenType::OpenSquare, "OpenSquare" },
+    { TokenType::CloseSquare, "CloseSquare" },
     { TokenType::Comma, "Comma" },
     { TokenType::Plus, "Plus" },
     { TokenType::Minus, "Minus" },

@@ -23,16 +23,19 @@ std::unique_ptr<ExpressionNode> Parser::parsePrimaryExpression()
             expect(TokenType::CloseParen);
             return expr;
         }
+        case TokenType::OpenBracket:
+            return parseArrayInitializer();
 
         // function call or variable ref
         case TokenType::Identifier:
+        {
             if (peekToken().getType() == TokenType::OpenParen)
                 return parseFunctionCallExpression();
             else
             {
                 auto identifier = parseVariableReference();
 
-                // Check for postfix increment/decrement
+                // Check for postfix increment/decrement 
                 if (currentToken.getType() == TokenType::Increment || currentToken.getType() == TokenType::Decrement)
                 {
                     UnaryOperatorType op = tokenToUnaryOperatorType(currentToken);
@@ -43,6 +46,7 @@ std::unique_ptr<ExpressionNode> Parser::parsePrimaryExpression()
                 // It's not a unary expression, so return as a variable reference
                 return identifier;
             }
+        }
 
         // Literal values
         case TokenType::Integer:
@@ -146,7 +150,7 @@ std::unique_ptr<UnaryExpressionNode> Parser::parseUnaryExpression()
         expr = parseExpression();
         return std::make_unique<UnaryExpressionNode>(std::move(expr), op);
     }
-    
+
     expr = parseExpression();
     
     if (opType == UnaryOperatorNodeType::Postfix)
@@ -275,7 +279,40 @@ std::unique_ptr<ExpressionNode> Parser::parseBinaryExpression(int exprPrec, std:
 std::unique_ptr<VariableReferenceNode> Parser::parseVariableReference()
 {
     std::unique_ptr<IdentifierNode> var = parseIdentifier();
-    return std::make_unique<VariableReferenceNode>(std::move(var));
+    std::vector<std::unique_ptr<ExpressionNode>> indices;
+
+    while (currentToken.getType() == TokenType::OpenSquare)
+    {
+        advance();
+        indices.push_back(parseExpression());
+        expect(TokenType::CloseSquare);
+    }
+
+    return std::make_unique<VariableReferenceNode>(std::move(var), std::move(indices));
+}
+
+std::unique_ptr<ArrayInitializerNode> Parser::parseArrayInitializer()
+{
+    expect(TokenType::OpenBracket);
+    
+    std::vector<std::unique_ptr<ExpressionNode>> elements;
+    while (currentToken.getType() != TokenType::CloseBracket)
+    {
+        elements.push_back(parseExpression());
+        if (currentToken.getType() == TokenType::Comma)
+        {
+            advance();
+        }
+        else if (currentToken.getType() != TokenType::CloseBracket)
+        {
+            throw ParserException("Expected ',' or '}' in array initializer", 
+                                  TokenType::Comma, currentToken);
+        }
+    }
+
+    expect(TokenType::CloseBracket);
+    
+    return std::make_unique<ArrayInitializerNode>(std::move(elements));
 }
 
 // ---------- Literal parsing ---------- /

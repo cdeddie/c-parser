@@ -53,6 +53,33 @@ void Parser::expect(TokenType type, std::optional<std::string> value)
     }
 }
 
+// Don't need a main function, this function immediately starts parsing statements
+// rather than looking for functions or global variables
+std::unique_ptr<AST> Parser::parseTest()
+{
+    try 
+    {
+        std::vector<std::unique_ptr<StatementNode>> statements;
+
+        while (currentToken.getType() != TokenType::EndOfFile) 
+        {
+            statements.push_back(parseStatement());
+        }
+
+        if (currentToken.getType() != TokenType::EndOfFile) 
+        {
+            throw ParserException("Unexpected tokens after statements", TokenType::EndOfFile, currentToken);
+        }
+
+        return std::make_unique<AST>(std::make_unique<ProgramNode>(std::move(statements), currentToken.getLine(), currentToken.getColumn()));
+    } 
+    catch (const std::exception& error) 
+    {
+        std::cerr << "Error during test parsing: " << error.what() << std::endl;
+        return nullptr;
+    }
+}
+
 std::unique_ptr<AST> Parser::parse()
 {
     try
@@ -87,61 +114,58 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
             throw std::runtime_error("Unexpected end of lexer input");
         }
 
-        if (currentToken.getType() == TokenType::Type && peekToken().getType() == TokenType::Identifier)
-        {
-            // Functions
-            if (peekToken(2).getType() == TokenType::OpenParen)
-            {
-                int i = 3; // peekToken parameter
-                while (peekToken(i).getType() != TokenType::CloseParen)
-                {
-                    i++;
-                }
-
-                if (peekToken(i+1).getType() == TokenType::OpenBracket)
-                {
-                    programNodes.push_back(parseFunctionDefinition());
-                }
-                else if (peekToken(i+1).getType() == TokenType::Semicolon)
-                {
-                    programNodes.push_back(parseFunctionDeclaration());
-                }
-
-            }
-            // Variables
-            else if (peekToken(2).getType() == TokenType::Semicolon || peekToken(2).getType() == TokenType::Assignment)
-            {
-                // Declaration
-                if (peekToken(2).getType() == TokenType::Semicolon)
-                {
-                    programNodes.push_back(parseVariableDeclaration());
-                    
-                }
-                // Definition
-                else if (peekToken(2).getType() == TokenType::Assignment)
-                {
-                    programNodes.push_back(parseVariableDefinition());
-                    
-                }
-            }
-            // Errors
-            else
-            {
-                // Debugging
-                std::cout << "After logic\n";
-
-                throw std::runtime_error("Invalid syntax at line " + std::to_string(lexer.getCurrentLine()) + ", column " + std::to_string(lexer.getCurrentColumn()));
-            }
-        }
-        else 
+        if (currentToken.getType() != TokenType::Type)
         {
             throw ParserException("Expected a type declaration or definition in parseProgram()", TokenType::Type, currentToken);
         }
-    }
 
+        int peekOffset = 1; 
+        while (peekToken(peekOffset).getType() == TokenType::Asterisk)
+        {
+            peekOffset++;
+        }
+
+        if (peekToken(peekOffset).getType() != TokenType::Identifier)
+        {
+            throw std::runtime_error("Expected an identifier after type at line " + std::to_string(lexer.getCurrentLine()) + ", column " + std::to_string(lexer.getCurrentColumn()));
+        }
+
+        // Functions
+        if (peekToken(peekOffset + 1).getType() == TokenType::OpenParen)
+        {
+            int i = peekOffset + 2; 
+            while (peekToken(i).getType() != TokenType::CloseParen && peekToken(i).getType() != TokenType::EndOfFile)
+            {
+                i++;
+            }
+
+            if (peekToken(i + 1).getType() == TokenType::OpenBracket)
+            {
+                programNodes.push_back(parseFunctionDefinition());
+            }
+            else if (peekToken(i + 1).getType() == TokenType::Semicolon)
+            {
+                programNodes.push_back(parseFunctionDeclaration());
+            }
+        }
+        // Variables
+        else if (peekToken(peekOffset + 1).getType() == TokenType::Semicolon)
+        {
+            programNodes.push_back(parseVariableDeclaration());
+        }
+        else if (peekToken(peekOffset + 1).getType() == TokenType::Assignment)
+        {
+            programNodes.push_back(parseVariableDefinition());
+        }
+        else
+        {
+            throw std::runtime_error("Invalid syntax at line " + std::to_string(lexer.getCurrentLine()) + ", column " + std::to_string(lexer.getCurrentColumn()));
+        }
+    }
 
     return std::make_unique<ProgramNode>(std::move(programNodes), currentToken.getLine(), currentToken.getColumn());
 }
+
 
 std::unique_ptr<FunctionDefinitionNode> Parser::parseFunctionDefinition()
 {

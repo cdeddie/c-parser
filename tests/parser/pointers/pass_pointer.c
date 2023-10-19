@@ -1,0 +1,1 @@
+void func(int* ptr) { *ptr = 10; }

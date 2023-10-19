@@ -37,6 +37,7 @@ public:
     virtual void visit(const ReturnNode& node) const = 0;
     virtual void visit(const StatementNode& node) const = 0;
     virtual void visit(const VariableDefinitionNode& node) const = 0;
+    virtual void visit(const AssignmentStatementNode& node) const = 0;
     virtual void visit(const FunctionCallStatementNode& node) const = 0;
     virtual void visit(const IfNode& node) const = 0;
     virtual void visit(const ForNode& node) const = 0;
@@ -45,4 +46,8 @@ public:
     // Declaration nodes (under Statement)
     virtual void visit(const FunctionDeclarationNode& node) const = 0;
     virtual void visit(const VariableDeclarationNode& node) const = 0;
+
+    // Other
+    virtual void visit(const ArraySpecifierNode& node) const = 0;
+    virtual void visit(const ArrayInitializerNode& node) const = 0;
 };
