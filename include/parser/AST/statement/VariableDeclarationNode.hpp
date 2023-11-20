@@ -6,7 +6,7 @@
 #include "parser/AST/TypeNode.hpp"
 #include "parser/AST/ArraySpecifierNode.hpp"
 
-#include <memory>
+#include <vector>
 
 class VariableDeclarationNode : public StatementNode
 {

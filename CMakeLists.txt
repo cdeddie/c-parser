@@ -16,7 +16,7 @@ add_executable(main ${MAIN_SRC_LIST} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 target_include_directories(main PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
 # Test Suites
-set(TEST_SUITES LexerTestSuite ParserTestSuite PointerTestSuite)
+set(TEST_SUITES LexerTestSuite ParserTestSuite PointerTestSuite JSONTestSuite)
 
 foreach(TEST_SUITE ${TEST_SUITES})
     # Add test source files.

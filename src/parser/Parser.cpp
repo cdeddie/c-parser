@@ -5,6 +5,7 @@ Parser::Parser(Lexer& lexer) : lexer(lexer), currentToken(lexer.nextToken())
     
 }
 
+// peekToken(int n) starts at 0, so peekToken(0) returns currentToken
 Token Parser::peekToken(int n) const
 {
     return lexer.peekToken(n);
@@ -119,26 +120,37 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
             throw ParserException("Expected a type declaration or definition in parseProgram()", TokenType::Type, currentToken);
         }
 
+        // Offset to determine where to start parsing again after finding an asterisk (pointer grammar)
+        // Starts at 1 for peekToken(int n) - when using peekToken with peekOffset, it will (hopefully)
+        // start at the identifier - e.g. int** func(), peekToken(peekOffset).value = func
         int peekOffset = 1; 
         while (peekToken(peekOffset).getType() == TokenType::Asterisk)
         {
             peekOffset++;
         }
 
+        
         if (peekToken(peekOffset).getType() != TokenType::Identifier)
         {
-            throw std::runtime_error("Expected an identifier after type at line " + std::to_string(lexer.getCurrentLine()) + ", column " + std::to_string(lexer.getCurrentColumn()));
+            throw std::runtime_error("Expected an identifier after type at line " + 
+                                     std::to_string(lexer.getCurrentLine()) + ", column " + 
+                                     std::to_string(lexer.getCurrentColumn()));
         }
 
-        // Functions
+        // Function declarations and definitions
         if (peekToken(peekOffset + 1).getType() == TokenType::OpenParen)
         {
+            // i functions as an offset variable for peekToken()
+            // Adding 2 because
             int i = peekOffset + 2; 
+            // Looking ahead for function parameters
             while (peekToken(i).getType() != TokenType::CloseParen && peekToken(i).getType() != TokenType::EndOfFile)
             {
                 i++;
             }
 
+            // Once we know how far to peek to look past parameters, determine if the grammar
+            // is a function definition or declaration
             if (peekToken(i + 1).getType() == TokenType::OpenBracket)
             {
                 programNodes.push_back(parseFunctionDefinition());
@@ -148,6 +160,7 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
                 programNodes.push_back(parseFunctionDeclaration());
             }
         }
+
         // Variables
         else if (peekToken(peekOffset + 1).getType() == TokenType::Semicolon)
         {
@@ -157,9 +170,11 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
         {
             programNodes.push_back(parseVariableDefinition());
         }
+        
         else
         {
-            throw std::runtime_error("Invalid syntax at line " + std::to_string(lexer.getCurrentLine()) + ", column " + std::to_string(lexer.getCurrentColumn()));
+            throw std::runtime_error("Invalid syntax at line " + std::to_string(lexer.getCurrentLine()) + 
+                                     ", column " + std::to_string(lexer.getCurrentColumn()));
         }
     }
 

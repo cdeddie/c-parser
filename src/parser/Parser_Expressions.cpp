@@ -253,6 +253,7 @@ BinaryOperatorType Parser::tokenToBinaryOperatorType(const Token& token)
     }
 }
 
+// Precedence climbing
 std::unique_ptr<ExpressionNode> Parser::parseBinaryExpression(int exprPrec, std::unique_ptr<ExpressionNode> left)
 {
     while (true)
