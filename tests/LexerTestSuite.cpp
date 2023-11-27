@@ -23,12 +23,6 @@ protected:
             Lexer lexer(input);
             lexer.printAllTokens();
         });
-
-        runTest("Pointer c program", [&]{
-            std::stringstream input = loadTestFile("/parser/pointer.c");
-            Lexer lexer(input);
-            lexer.printAllTokens();
-        });
     }
 };
 

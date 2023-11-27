@@ -297,7 +297,6 @@ std::unique_ptr<FunctionCallStatementNode> Parser::parseFunctionCallStatement()
 
 std::unique_ptr<ForNode> Parser::parseForStatement()
 {
-    std::cout << "Recognized for statement\n";
     int startLine = currentToken.getLine();
     int startColumn = currentToken.getColumn();
 

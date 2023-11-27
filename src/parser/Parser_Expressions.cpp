@@ -65,7 +65,6 @@ std::unique_ptr<ExpressionNode> Parser::parsePrimaryExpression()
         case TokenType::Decrement:
         case TokenType::Ampersand:
         case TokenType::Asterisk:
-            std::cout << "Recognized unary expression\n";
             return parseUnaryExpression();
 
         default:

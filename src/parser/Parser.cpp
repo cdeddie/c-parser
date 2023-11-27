@@ -102,11 +102,11 @@ std::unique_ptr<AST> Parser::parse()
     
 }
 
+// KNOWN BUG: Lexer will not properly read variables after the very last function. This involves 
+// some sort of bug with the lexer regarding semicolons as the last character in the stream
 std::unique_ptr<ProgramNode> Parser::parseProgram()
 {
     std::vector<std::unique_ptr<StatementNode>> programNodes;
-    
-    std::cout << "Parsing...\n";
 
     while (currentToken.getType() != TokenType::EndOfFile)
     {
@@ -141,7 +141,7 @@ std::unique_ptr<ProgramNode> Parser::parseProgram()
         if (peekToken(peekOffset + 1).getType() == TokenType::OpenParen)
         {
             // i functions as an offset variable for peekToken()
-            // Adding 2 because
+            // Adding 2 because... ?
             int i = peekOffset + 2; 
             // Looking ahead for function parameters
             while (peekToken(i).getType() != TokenType::CloseParen && peekToken(i).getType() != TokenType::EndOfFile)
@@ -201,7 +201,6 @@ std::unique_ptr<FunctionDefinitionNode> Parser::parseFunctionDefinition()
         startColumn
     );
 
-    advance();
     return functionDefinitionNode;
 }
 
