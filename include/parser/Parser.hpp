@@ -15,7 +15,7 @@
 class Parser
 {
 public:
-    explicit Parser(Lexer& lexer);
+    Parser(Lexer& lexer);
     std::unique_ptr<AST> parse();
     std::unique_ptr<AST> parseTest();
 

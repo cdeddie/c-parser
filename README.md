@@ -37,10 +37,10 @@ Replace [output_format] with 1 for JSON output or 2 for plain text output.
 #### File Input
 To use a .c file as input, first create or place your .c file in the build directory. Then run:
    ```bash
-   ./main [output_format] < your_file.c
+   ./main [output_format] < test.c
    ```
 
-Replace your_file.c with the name of your C file, and [output_format] as above.
+Replace your_file.c with the name of the C file, and [output_format] as above.
 
 ## WARNING
 This project is not a complete C parser. There are major language features that are missing. This is simply a personal side project. Here is a list of known bugs/missing features:

@@ -20,7 +20,7 @@
 class Lexer 
 {
 public:
-    explicit Lexer(std::istream& input);
+    Lexer(std::istream& input);
     bool isAtEnd() const;
 
     Token nextToken();

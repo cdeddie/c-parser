@@ -20,5 +20,5 @@ public:
     virtual void accept(const Visitor& visitor) const override;
 private:
     std::unique_ptr<IdentifierNode> identifier;
-    std::vector<std::unique_ptr<ExpressionNode>> indices;
+    std::vector<std::unique_ptr<ExpressionNode>> indices; // array indices i.e. int arr[4];
 };
