@@ -1,7 +1,5 @@
 #include "lexer/Lexer.hpp"
 #include <cctype>
-#include <vector>
-#include <algorithm>
 
 Lexer::Lexer(std::istream& input) : input(input), currentChar(0), currentLine(1), currentColumn(0) 
 {
@@ -45,6 +43,31 @@ void Lexer::advance()
         currentChar = EOF;
 }
 
+Token Lexer::getNextToken() 
+{
+    if (currentChar == EOF)
+        return Token(TokenType::EndOfFile, "", currentLine, currentColumn);
+
+    if (std::isspace(currentChar)) 
+    {
+        advance();
+        return getNextToken();  // Recursive call to skip whitespace and get the next token
+    }
+    else if (std::isalpha(currentChar) || currentChar == '_') 
+        return identifier();
+    else if (std::isdigit(currentChar)) 
+        return number();
+    else if (currentChar == '"') 
+        return stringLiteral();
+    else if (currentChar == '\'') 
+        return charLiteral();
+    else if (currentChar == '#') 
+        return preprocessorDirective();
+    else 
+        return symbol();
+}
+
+
 Token Lexer::nextToken() 
 {
     Token token = tokenQueue.front();
@@ -56,47 +79,28 @@ Token Lexer::nextToken()
 // Core of lexical analysis, analyses the currentChar
 void Lexer::enqueueToken()
 {
-    while (currentChar != EOF)
-    {
-        if (std::isspace(currentChar))
-        {
-            advance();
-            continue;
-        }
-        else if (std::isalpha(currentChar) || currentChar == '_')
-        {
-            tokenQueue.push_back(identifier());
-            return;
-        }
-        else if (std::isdigit(currentChar))
-        {
-            tokenQueue.push_back(number());
-            return;
-        }
-        else if (currentChar == '"')
-        {
-            tokenQueue.push_back(stringLiteral());
-            return;
-        }
-        else if (currentChar == '\'')
-        {
-            tokenQueue.push_back(charLiteral());
-            return;
-        }
-        else if (currentChar == '#')
-        {
-            tokenQueue.push_back(preprocessorDirective());
-            return;
-        }
-        else
-        {
-            tokenQueue.push_back(symbol());
-            return;
-        }
+    Token next = getNextToken();
+    tokenQueue.push_back(next);
+}
 
-        advance();
-    }
-    tokenQueue.push_back(Token(TokenType::EndOfFile, "", currentLine, currentColumn));
+std::vector<Token> Lexer::getTokenVector(std::istream& input)
+{
+    std::vector<Token> tokens;
+
+    // Reset internal state (in case)
+    currentChar = 0;
+    currentLine = 1;
+    currentColumn = 0;
+    advance();
+
+    Token nextToken;
+    do 
+    {
+        nextToken = getNextToken();
+        tokens.push_back(nextToken);
+    } while (nextToken.getType() != TokenType::EndOfFile);    
+
+    return tokens;
 }
 
 void Lexer::printAllTokens()

@@ -1,10 +1,21 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include "parser/Parser.hpp"
 #include "parser/JsonExportVisitor.hpp"
+#include "parser/PrintVisitor.hpp"
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 2)
+    {
+        std::cerr << "Usage: ./main <output_format>\n";
+        std::cerr << "       output_format: 1 for JSON, 2 for plain text\n";
+        return 1;
+    }
+
+    int choice = std::stoi(argv[1]);
+
     std::string line, code;
     while (std::getline(std::cin, line))
         code += line + "\n";
@@ -13,11 +24,24 @@ int main()
 
     Lexer lexer(input);
     Parser parser(lexer);
-    JsonExportVisitor jsonVisitor;
     auto ast = parser.parse();
 
-    nholmann:json astJson = ast->toJson();
+    if (choice == 1)
+    {
+        JsonExportVisitor jsonVisitor;
+        nlohmann::json astJson = ast->toJson();
+        std::cout << astJson.dump(4);
+    }
+    else if (choice == 2)
+    {
+        PrintVisitor printVisitor;
+        ast->printTree(printVisitor);
+    }
+    else
+    {
+        std::cerr << "Invalid output format!" << std::endl;
+        return 1;
+    }
 
-    std::cout << astJson.dump(4);
-
+    return 0;
 }
