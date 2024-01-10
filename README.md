@@ -5,7 +5,7 @@ This project is a C parser written in C++. It takes C code as input and generate
 
 ## Requirements
 - C++ compiler with support for at least C++17 (e.g., GCC 8 or later, Clang 5 or later)
-- CMake V3.1 (for building the project)
+- CMake V3.1 or later (for building the project)
 
 ## Building the Project
 To build the project, follow these steps:
