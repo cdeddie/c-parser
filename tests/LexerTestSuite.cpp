@@ -7,19 +7,19 @@ protected:
     void runTests() override
     {
         runTest("Basic c program", [&]{
-            std::stringstream input = loadTestFile("/lexer/basic.c");
+            std::stringstream input = loadTestFile("/lexer_input/basic.c");
             Lexer lexer(input);
             lexer.printAllTokens();
         });
 
         runTest("Functional c program", [&]{
-            std::stringstream input = loadTestFile("/lexer/function.c");
+            std::stringstream input = loadTestFile("/lexer_input/function.c");
             Lexer lexer(input);
             lexer.printAllTokens();
         });
 
         runTest("Control flow c program", [&]{
-            std::stringstream input = loadTestFile("/lexer/control.c");
+            std::stringstream input = loadTestFile("/lexer_input/control.c");
             Lexer lexer(input);
             lexer.printAllTokens();
         });

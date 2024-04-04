@@ -3,11 +3,11 @@
 int main(void)
 {
     int x = 0;
-    if (x == 0)
+    if (true)
     {
         printf("Hello!");
     }
-    else if (x == 1)
+    else if (false)
     {
         printf("World!");
     }

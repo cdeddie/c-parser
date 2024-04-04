@@ -9,22 +9,22 @@ protected:
     void runTests() override
     {
         runTest("While loop test", [&]() {
-            std::stringstream input = loadTestFile("/parser/while_loop.c");
+            std::stringstream input = loadTestFile("/parser_input/while_loop.c");
             parseAndPrintAST(input);
         });
 
         runTest("For loop test", [&]() {
-            std::stringstream input = loadTestFile("/parser/for_loop.c");
+            std::stringstream input = loadTestFile("/parser_input/for_loop.c");
             parseAndPrintAST(input);
         });
 
         runTest("If statement test", [&]() {
-            std::stringstream input = loadTestFile("/parser/if_else.c");
+            std::stringstream input = loadTestFile("/parser_input/if_else.c");
             parseAndPrintAST(input);
         });
 
         runTest("Array test", [&]() {
-            std::stringstream input = loadTestFile("/parser/array.c");
+            std::stringstream input = loadTestFile("/parser_input/array.c");
             parseAndPrintAST(input);
         });
     }

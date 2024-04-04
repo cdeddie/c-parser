@@ -108,8 +108,8 @@ void Lexer::printAllTokens()
     while (!isAtEnd())
     {
         Token token = nextToken();
-        std::cout << "Token: " << token.typeToString() << 
-                    " (line " << token.getLine() << ", column " << token.getColumn() << ")\n";
+        std::cout << "Token: " << std::setw(30) << token.typeToString() << 
+                    " (line " << token.getLine() << ", column " << token.getColumn() << ")\t\t | Value:" << token.getValue() << "\n";
     }
 }
 

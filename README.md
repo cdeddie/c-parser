@@ -48,7 +48,8 @@ This project is not a complete C parser. There are major language features that 
 - Preprocessor directives - ```#include```, ```#define``` etc.
 - Structs
 - Comments
-- Array parameters (e.g. ```int func(int arr[]); ```) - use pointers instead
+- true/false values - use 1, 0
+- Array as a parameter (e.g. ```int func(int arr[]); ```) - use pointers instead
 - Compound assignment operators (e.g. ```+=```, ```-=```)
 - Declaring global variables after the last function in a file.
 - Defining/declaring multiple variables in one line.

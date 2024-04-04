@@ -9,23 +9,23 @@ file(GLOB_RECURSE MAIN_SRC_LIST CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.c
 # Exclude main.cpp from being included in the tests
 list(FILTER MAIN_SRC_LIST EXCLUDE REGEX "${PROJECT_SOURCE_DIR}/src/main.cpp$")
 
-# Create executable for the main code
+# Create exe for main
 add_executable(main ${MAIN_SRC_LIST} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-# Include directories for main target
+# Include hpp files for main.exe
 target_include_directories(main PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
-# Test Suites
+# Declare test suites
 set(TEST_SUITES LexerTestSuite ParserTestSuite PointerTestSuite JSONTestSuite)
 
 foreach(TEST_SUITE ${TEST_SUITES})
-    # Add test source files.
+    # Test source files.
     file(GLOB_RECURSE TEST_SRC_LIST CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/tests/${TEST_SUITE}.cpp")
 
-    # Create executable for the TestSuite
+    # Test suite exe
     add_executable(${TEST_SUITE} ${MAIN_SRC_LIST} ${TEST_SRC_LIST})
 
-    # Include directories for specific targets
+    # Include hpp files for each test suite
     target_include_directories(${TEST_SUITE} PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
     # Rename main function to TestSuiteMain

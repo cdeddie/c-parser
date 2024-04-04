@@ -6,15 +6,14 @@
 #include <deque>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 #include "lexer/Token.hpp"
 
 /* 
-    Lexer that converts input string into a series of Tokens. 
-    The lexer works in tandem with the parser, using the advance() function,
-    however when the parser needs to lookahead, a deque is used to store tokens for 
-    the lexer to catch up to the parser.
-
-
+//  Lexer that converts input string into a series of Tokens. 
+//  The lexer works in tandem with the parser, using the advance() function,
+//  however when the parser needs to lookahead, a deque is used to store tokens for 
+//  the lexer to catch up to the parser.
 */
 
 class Lexer 

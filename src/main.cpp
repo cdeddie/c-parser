@@ -4,6 +4,7 @@
 #include "parser/Parser.hpp"
 #include "parser/JsonExportVisitor.hpp"
 #include "parser/PrintVisitor.hpp"
+#include "analysis/Preprocessor.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -16,11 +17,29 @@ int main(int argc, char *argv[])
 
     int choice = std::stoi(argv[1]);
 
-    std::string line, code;
-    while (std::getline(std::cin, line))
-        code += line + "\n";
+    std::string line, directivesCode, processedCode;
 
-    std::istringstream input(code);
+    while (std::getline(std::cin, line))
+    {
+        if (!line.empty() && line[0] == '#')
+        {
+            directivesCode += line + "\n";
+        }
+        else
+        {
+            processedCode += line + "\n";
+        }
+    }
+
+    Preprocessor preprocessor(directivesCode);
+    preprocessor.process();
+
+    std::unordered_map<std::string, std::string> macros = preprocessor.getMacros();
+    for (const auto& pair : macros) {
+        std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+    }
+
+    std::istringstream input(processedCode);
 
     Lexer lexer(input);
     Parser parser(lexer);

@@ -6,7 +6,7 @@ void SymbolTable::insert(const std::string& name, Symbol::SymbolType type)
 {
     // Check if the symbol already exists in the table
     if (table.find(name) != table.end()) 
-	{
+    {
         throw std::runtime_error("Symbol already exists: " + name);
     }
 
@@ -22,7 +22,7 @@ bool SymbolTable::exists(const std::string& name) const
 const Symbol& SymbolTable::lookup(const std::string& name) const 
 {
     if (!exists(name)) 
-	{
+    {
         throw std::runtime_error("Symbol does not exist: " + name);
     }
 
