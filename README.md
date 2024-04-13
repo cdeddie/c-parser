@@ -1,7 +1,7 @@
 # C Parser Project
 
 ## Intro
-This project is a C parser written in C++. It takes C code as input and generates an Abstract Syntax Tree (AST). The AST can be output in either JSON format or as a plain text tree representation.
+This project is a C parser written in C++. It takes C code as input and generates an Abstract Syntax Tree (AST). The AST can be output as a plain text tree representation, or as an HTML tree structure using ul and li
 
 ## Requirements
 - C++ compiler with support for at least C++17 (e.g., GCC 8 or later, Clang 5 or later)
@@ -32,7 +32,7 @@ To run the parser with inline input, use:
    echo "your C code here" | ./main [output_format]
    ```
 
-Replace [output_format] with 1 for JSON output or 2 for plain text output.
+Replace [output_format] with 1 for HTML output or 2 for plain text output.
 
 #### File Input
 To use a .c file as input, first create or place your .c file in the build directory. Then run:

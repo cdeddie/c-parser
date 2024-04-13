@@ -5,6 +5,7 @@
 #include "parser/JsonExportVisitor.hpp"
 #include "parser/PrintVisitor.hpp"
 #include "analysis/Preprocessor.hpp"
+#include "parser/HTMLVisitor.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -47,9 +48,10 @@ int main(int argc, char *argv[])
 
     if (choice == 1)
     {
-        JsonExportVisitor jsonVisitor;
-        nlohmann::json astJson = ast->toJson();
-        std::cout << astJson.dump(4);
+        HTMLVisitor htmlVisitor;
+        ast->printHTML(htmlVisitor);
+        std::string html = htmlVisitor.getHTML();
+        std::cout << html << std::endl;
     }
     else if (choice == 2)
     {

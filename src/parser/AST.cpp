@@ -16,6 +16,11 @@ void AST::printTree(PrintVisitor& visitor)
     root->accept(visitor);
 }
 
+void AST::printHTML(HTMLVisitor& visitor)
+{
+    root->accept(visitor);
+}
+
 json AST::toJson() const
 {
     JsonExportVisitor visitor;

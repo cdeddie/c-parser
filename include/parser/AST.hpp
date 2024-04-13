@@ -4,6 +4,7 @@
 #include "parser/AST/ProgramNode.hpp"
 #include "parser/PrintVisitor.hpp"
 #include "parser/JsonExportVisitor.hpp"
+#include "parser/HTMLVisitor.hpp"
 #include <memory>
 
 using json = nlohmann::json;
@@ -16,6 +17,7 @@ public:
     const ProgramNode& getRoot() const;
     
     void printTree(PrintVisitor& visitor);
+    void printHTML(HTMLVisitor& visitor);
     json toJson() const;
 private:
     std::unique_ptr<ProgramNode> root;
