@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 #include "parser/Parser.hpp"
-#include "parser/JsonExportVisitor.hpp"
 #include "parser/PrintVisitor.hpp"
 #include "analysis/Preprocessor.hpp"
 #include "parser/HTMLVisitor.hpp"
@@ -12,7 +11,7 @@ int main(int argc, char *argv[])
     if (argc != 2)
     {
         std::cerr << "Usage: ./main <output_format>\n";
-        std::cerr << "       output_format: 1 for JSON, 2 for plain text\n";
+        std::cerr << "       output_format: 1 for HTML, 2 for plain text\n";
         return 1;
     }
 

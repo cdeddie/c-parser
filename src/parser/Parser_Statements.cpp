@@ -109,7 +109,7 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
         }
         
         default:
-            return nullptr;
+            throw std::runtime_error("Unexpected token encountered");
     }
 }
 
