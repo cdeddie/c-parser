@@ -20,9 +20,3 @@ void AST::printHTML(HTMLVisitor& visitor)
 {
     root->accept(visitor);
 }
-
-json AST::toJson() const
-{
-    JsonExportVisitor visitor;
-    return visitor.toJson(*root);
-}
