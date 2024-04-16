@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
             for (const auto& pair : macros)
             {
                 std::cout << pair.first << "=" << pair.second;
-                if (cunt++ < macros.size())
+                if (cunt++ < macros.size() - 1)
                 {
                     std::cout << ",";
                 }
