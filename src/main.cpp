@@ -21,8 +21,16 @@ int main(int argc, char *argv[]) {
     }
 
     std::string line, directivesCode, processedCode;
+    int count = 0;
+    const int MAX_LINES = 500;
 
     while (std::getline(std::cin, line)) {
+        if (count >= MAX_LINES)
+        {
+            std::cerr << "Input exceeds maximum allowed lines\n";
+            return 1;
+        }
+
         if (line.size() > 1000)
         {
             std::cerr << "Input line exceeds maximum allowed length\n";
@@ -34,6 +42,7 @@ int main(int argc, char *argv[]) {
         } else {
             processedCode += line + "\n";
         }
+        count++;
     }
 
     Preprocessor preprocessor(directivesCode);
