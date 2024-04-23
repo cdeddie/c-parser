@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <chrono>
 
 #include "parser/Parser.hpp"
 #include "parser/PrintVisitor.hpp"
@@ -10,16 +9,26 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        std::cerr << "Usage: ./main <output_format>\n";
-        std::cerr << "       output_format: 1 for HTML, 2 for plain text\n";
+        std::cerr << "Usage: ./main <output_format>\noutput_format: 1 for HTML, 2 for plaintext\n";
         return 1;
-    }
+    } 
 
     int choice = std::stoi(argv[1]);
+    if (choice != 1 && choice != 2)
+    {
+        std::cerr << "Invalid output format. Use 1 for HTML and 2 for plaintext\n";
+        return 1;
+    }
 
     std::string line, directivesCode, processedCode;
 
     while (std::getline(std::cin, line)) {
+        if (line.size() > 1000)
+        {
+            std::cerr << "Input line exceeds maximum allowed length\n";
+            return 1;
+        }
+        
         if (!line.empty() && line[0] == '#') {
             directivesCode += line + "\n";
         } else {
