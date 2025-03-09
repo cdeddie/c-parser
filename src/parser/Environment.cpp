@@ -19,7 +19,7 @@ void Environment::popScope()
 
 bool Environment::exists(const std::string& name) const
 {
-    for (size_t i = symbolTableStack.size() - 1; i >= 0; i--)
+    for (int i = symbolTableStack.size() - 1; i >= 0; i--)
     {
         if (symbolTableStack.top().exists(name))
         {
@@ -31,7 +31,7 @@ bool Environment::exists(const std::string& name) const
 
 const Symbol& Environment::lookup(const std::string& name) const
 {
-    for (size_t i = symbolTableStack.size() - 1; i >= 0; i--)
+    for (int i = symbolTableStack.size() - 1; i >= 0; i--)
     {
         if (symbolTableStack.top().exists(name))
         {

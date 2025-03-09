@@ -4,6 +4,8 @@
 #include <memory>
 #include <vector>
 
+// for (init; condition; increment) body
+
 class ForNode : public StatementNode
 {
 public:

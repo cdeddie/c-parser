@@ -17,3 +17,8 @@ bak/
 .vscode/
 *.code-workspace
 .VSCodeCounter/
+
+#
+/node_modules
+
+wasm_compile.ps1

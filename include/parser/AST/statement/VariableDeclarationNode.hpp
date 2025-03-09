@@ -8,6 +8,8 @@
 
 #include <vector>
 
+// int a || int a[5]
+
 class VariableDeclarationNode : public StatementNode
 {
 public:

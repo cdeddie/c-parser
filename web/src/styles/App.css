@@ -1,0 +1,97 @@
+.app-container {
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: var(--primary-color);
+}
+
+.content {
+  font-size: 1.2rem;
+}
+
+.buttons {
+  margin-top: 1vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 8px;
+}
+
+.parse-button {
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  display: flex;
+  gap: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: var(--text-color);
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+button:hover {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 1vh;
+  left: 1vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+img {
+  width: 20px;
+  height: 20px;
+}
+
+.white-svg {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(5%) saturate(18%) hue-rotate(134deg) brightness(107%) contrast(100%);
+}
+
+.editor-container {
+  margin-top: 3vh;
+  border: 3px solid var(--primary-color);
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tree {
+  border: 1px solid var(--text-color);
+  height: 52vh;
+  margin-top: 1vh;
+  margin-left: 1vw;
+  margin-right: 1vw;
+}
+
+.node__root > circle {
+  fill: red;
+}
+
+.node__branch > circle {
+  fill: yellow;
+}
+
+.node__leaf > circle {
+  fill: green;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
