@@ -140,7 +140,6 @@ int main()
   }, []);
 
   function parse() {
-    console.log(input);
     if (!wasmModule) {
       console.error("WASM module not loaded yet!");
       setError(true);

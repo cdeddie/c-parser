@@ -111,6 +111,8 @@ std::unique_ptr<StatementNode> Parser::parseStatement()
         default:
             throw std::runtime_error("Unexpected token encountered");
     }
+
+    return nullptr;
 }
 
 std::unique_ptr<ArraySpecifierNode> Parser::parseArraySpecifier()

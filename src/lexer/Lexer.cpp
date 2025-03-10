@@ -1,7 +1,7 @@
 #include "lexer/Lexer.hpp"
 #include <cctype>
 
-Lexer::Lexer(std::istream& input) : input(input), currentChar(0), currentLine(1), currentColumn(0) 
+Lexer::Lexer(std::istream& input) : input(input), currentChar(0), currentLine(2), currentColumn(0) 
 {
     advance();
     enqueueToken();

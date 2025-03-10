@@ -90,6 +90,10 @@ img {
   fill: green;
 }
 
+.rd3t-label__title {
+  fill: var(--text-color) !important;
+}
+
 .error-message {
   color: red;
   font-weight: bold;
